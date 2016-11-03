@@ -14,7 +14,7 @@ public interface MainView extends Presenter.View {
 
     void setItemsToRecycleView(List<EventItem> eventItemList);
 
-    void hidePullToRefreshProgress();
+    void hidePullToRefreshProgress(int day);
 
-    void showPullToRefreshProgress();
+    void showPullToRefreshProgress(int day);
 }

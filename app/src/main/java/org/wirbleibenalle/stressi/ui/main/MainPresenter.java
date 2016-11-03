@@ -39,7 +39,7 @@ public class MainPresenter extends Presenter<MainView> {
         loadEvents(localDate, day);
     }
 
-    public void loadEvents(LocalDate localDate, Integer day) {
+    public void loadEvents(final LocalDate localDate, final Integer day) {
 
         UseCase useCase = new GetEventsUseCase(dataRepository, localDate, day);
         useCase.execute(new DefaultObserver<List<EventItem>>() {
@@ -52,15 +52,15 @@ public class MainPresenter extends Presenter<MainView> {
             public void onError(Throwable e) {
                 super.onError(e);
                 Log.d(TAG, e.getMessage());
-                view.hidePullToRefreshProgress();
+                view.hidePullToRefreshProgress(day);
             }
 
             @Override
             public void onNext(List<EventItem> eventItemList) {
                 super.onNext(eventItemList);
-                Log.d(TAG, eventItemList.get(0).toString());
+                Log.d(TAG, "onNext : day"+day);
                 view.setItemsToRecycleView(eventItemList);
-                view.hidePullToRefreshProgress();
+                view.hidePullToRefreshProgress(day);
             }
         });
     }

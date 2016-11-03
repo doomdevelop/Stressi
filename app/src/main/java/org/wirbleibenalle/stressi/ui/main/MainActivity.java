@@ -102,13 +102,13 @@ public class MainActivity extends BaseActivity implements MainView {
     }
 
     @Override
-    public void hidePullToRefreshProgress() {
-        customPagerAdapter.hidePullToRefreshProgress();
+    public void hidePullToRefreshProgress(int day) {
+        customPagerAdapter.hidePullToRefreshProgress(day);
     }
 
     @Override
-    public void showPullToRefreshProgress() {
-        customPagerAdapter.showPullToRefreshProgress();
+    public void showPullToRefreshProgress(int day) {
+        customPagerAdapter.showPullToRefreshProgress(day);
     }
 
     private CustomPagerAdapter.PageAdapterCallback pageAdapterCallback = new CustomPagerAdapter.PageAdapterCallback() {
