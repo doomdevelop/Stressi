@@ -1,0 +1,75 @@
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
+
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+#THINK ABOUT .APK FILES
+
+# Android Studio
+*.iml
+.idea
+#.idea/workspace.xml - remove # and delete .idea if it better suit your needs.
+.gradle
+build/ 
+
+# OS generated files #
+######################
+.DS_Store?
+ehthumbs.db
+Icon?
+Thumbs.db
+*.DS_Store
+  
+#Eclipse
+.classpath
+.project
+.settings
+ 
+# Generated files
+/web-app/WEB-INF
+build/
+*.[oa]
+*.pyc
+  
+# Private settings
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+
+# Semi-private data
+xcuserdata
+*.xccheckout
+
+# Workspaces also are (could be) personal
+*.xcworkspace
+!default.xcworkspace
+
+# Deprecated classes
+*.moved-aside
+
+#################### OS X ####################
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# OS X Files that might appear on external disk
+.Spotlight-V100
+.Trashes
