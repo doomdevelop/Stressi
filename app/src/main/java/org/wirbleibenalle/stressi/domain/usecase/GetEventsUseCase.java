@@ -1,5 +1,6 @@
 package org.wirbleibenalle.stressi.domain.usecase;
 
+import org.joda.time.LocalDate;
 import org.wirbleibenalle.stressi.data.repository.DataRepository;
 
 import javax.inject.Inject;
@@ -12,17 +13,18 @@ import rx.Observable;
 
 public class GetEventsUseCase extends UseCase {
     private DataRepository dataRepository;
-    private long day;
+    private final LocalDate localDate;
+    private final Integer day;
 
     @Inject
-    public GetEventsUseCase(DataRepository dataRepository, long day) {
+    public GetEventsUseCase(DataRepository dataRepository, LocalDate localDate, Integer day) {
         this.dataRepository = dataRepository;
+        this.localDate = localDate;
         this.day = day;
     }
 
     @Override
     protected Observable buildUseCaseObservable() {
-
-        return dataRepository.getEvents(day);
+        return dataRepository.getEvents(localDate, day);
     }
 }

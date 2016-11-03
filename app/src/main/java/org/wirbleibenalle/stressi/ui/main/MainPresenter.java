@@ -3,6 +3,7 @@ package org.wirbleibenalle.stressi.ui.main;
 import android.os.Bundle;
 import android.util.Log;
 
+import org.joda.time.LocalDate;
 import org.wirbleibenalle.stressi.data.repository.DataRepository;
 import org.wirbleibenalle.stressi.domain.observer.DefaultObserver;
 import org.wirbleibenalle.stressi.domain.usecase.GetEventsUseCase;
@@ -21,6 +22,8 @@ import javax.inject.Inject;
 public class MainPresenter extends Presenter<MainView> {
     private static final String TAG = MainPresenter.class.getSimpleName();
     private DataRepository dataRepository;
+    private LocalDate initLocalDate;
+    private Integer currentDay = new Integer(0);
 
 
     @Inject
@@ -32,12 +35,13 @@ public class MainPresenter extends Presenter<MainView> {
 
     }
 
-    void onPullToRefresh() {
-        loadEvents();
+    void onPullToRefresh(LocalDate localDate, Integer day) {
+        loadEvents(localDate, day);
     }
 
-    public void loadEvents() {
-        UseCase useCase = new GetEventsUseCase(dataRepository, -1L);
+    public void loadEvents(LocalDate localDate, Integer day) {
+
+        UseCase useCase = new GetEventsUseCase(dataRepository, localDate, day);
         useCase.execute(new DefaultObserver<List<EventItem>>() {
             @Override
             public void onCompleted() {
@@ -65,6 +69,7 @@ public class MainPresenter extends Presenter<MainView> {
     public void initialize(Bundle extras) {
         super.initialize(extras);
         view.initializeRecyclerView();
-        loadEvents();
+        this.initLocalDate = LocalDate.now();
+//        loadEvents(initLocalDate,currentDay);
     }
 }

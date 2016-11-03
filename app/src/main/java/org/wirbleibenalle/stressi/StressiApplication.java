@@ -3,6 +3,8 @@ package org.wirbleibenalle.stressi;
 import android.app.Application;
 import android.content.Context;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 import org.wirbleibenalle.stressi.ui.DaggerMainComponent;
 import org.wirbleibenalle.stressi.ui.MainComponent;
 
@@ -19,6 +21,7 @@ public class StressiApplication extends Application {
         super.onCreate();
         mainComponent = DaggerMainComponent.create();
         context = getApplicationContext();
+        JodaTimeAndroid.init(this);
     }
 
     public MainComponent getMainComponent() {

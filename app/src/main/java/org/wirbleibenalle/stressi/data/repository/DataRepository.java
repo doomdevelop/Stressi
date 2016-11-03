@@ -1,6 +1,7 @@
 package org.wirbleibenalle.stressi.data.repository;
 
 
+import org.joda.time.LocalDate;
 import org.wirbleibenalle.stressi.ui.model.EventItem;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class DataRepository {
     }
 
 
-    public Observable<List<EventItem>> getEvents(long day) {
-        return apiRepository.getEvents(day);
+    public Observable<List<EventItem>> getEvents(LocalDate localDate, Integer day) {
+        return apiRepository.getEvents(localDate, day);
     }
 }

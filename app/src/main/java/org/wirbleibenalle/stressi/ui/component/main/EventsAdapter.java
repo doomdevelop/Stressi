@@ -19,6 +19,8 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private List<EventItem> eventItemList;
     private final RecyclerItemListener onRowClickListener;
 
+    private Integer currentDay;
+
     public EventsAdapter(RecyclerItemListener onRowClickListener) {
         this.onRowClickListener = onRowClickListener;
         this.eventItemList = new ArrayList<>();
@@ -27,6 +29,14 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public void setItems(List<EventItem> eventItemList) {
         this.eventItemList = eventItemList;
         notifyDataSetChanged();
+    }
+
+    public Integer getCurrentDay() {
+        return currentDay;
+    }
+
+    public void setCurrentDay(Integer currentDay) {
+        this.currentDay = currentDay;
     }
 
     @Override

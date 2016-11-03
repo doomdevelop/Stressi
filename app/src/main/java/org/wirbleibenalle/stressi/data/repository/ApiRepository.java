@@ -1,5 +1,6 @@
 package org.wirbleibenalle.stressi.data.repository;
 
+import org.joda.time.LocalDate;
 import org.wirbleibenalle.stressi.data.mapper.EventMapper;
 import org.wirbleibenalle.stressi.data.model.RSS;
 import org.wirbleibenalle.stressi.data.remote.ServiceGenerator;
@@ -28,10 +29,16 @@ public class ApiRepository {
         this.serviceGenerator = serviceGenerator;
     }
 
-    private Func1<RSS, List<EventItem>> transformFunction = rss -> new EventMapper().transform(rss);
-
-    public Observable<List<EventItem>> getEvents(long day) {
+    public Observable<List<EventItem>> getEvents(LocalDate localDate, Integer day) {
         EventService eventService = serviceGenerator.createService(EventService.class, BASE_URL);
-        return eventService.getEvents(BASE_URL).map(transformFunction);
+        return eventService.getEvents(BASE_URL + day).map(generateTransformFunction(localDate, day));
     }
+
+
+    private Func1<RSS, List<EventItem>> generateTransformFunction(LocalDate localDate, Integer day) {
+        Func1<RSS, List<EventItem>> transformFunction = rss -> new EventMapper(localDate, day)
+            .transform(rss);
+        return transformFunction;
+    }
+
 }

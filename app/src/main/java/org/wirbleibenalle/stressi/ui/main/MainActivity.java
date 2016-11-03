@@ -1,15 +1,14 @@
 package org.wirbleibenalle.stressi.ui.main;
 
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.view.ViewPager;
+import android.util.Log;
 
+import org.joda.time.LocalDate;
 import org.wirbleibenalle.stressi.StressiApplication;
 import org.wirbleibenalle.stressi.stressfaktor.R;
 import org.wirbleibenalle.stressi.ui.base.BaseActivity;
-import org.wirbleibenalle.stressi.ui.component.main.EventsAdapter;
-import org.wirbleibenalle.stressi.ui.component.main.SimpleDividerItemDecoration;
+import org.wirbleibenalle.stressi.ui.component.pageView.CustomPagerAdapter;
 import org.wirbleibenalle.stressi.ui.model.EventItem;
 
 import java.util.List;
@@ -21,13 +20,11 @@ import butterknife.Bind;
 public class MainActivity extends BaseActivity implements MainView {
     @Inject
     MainPresenter presenter;
-    @Bind(R.id.refresh_events_list)
-    SwipeRefreshLayout refreshEventList;
-    @Bind(R.id.rv_events_list)
-    RecyclerView rvEventsList;
-    EventsAdapter eventsAdapter;
-    LinearLayoutManager layoutManager;
+    @Bind(R.id.viewpager)
+    ViewPager viewPager;
+    private static final String TAG = CustomPagerAdapter.class.getSimpleName();
 
+    private CustomPagerAdapter customPagerAdapter;
     @Override
     protected void initializeDagger() {
         StressiApplication app = (StressiApplication) getApplication();
@@ -68,24 +65,66 @@ public class MainActivity extends BaseActivity implements MainView {
 
     @Override
     public void initializeRecyclerView() {
-        eventsAdapter = new EventsAdapter(position -> presenter.onListItemclicked(position));
-        refreshEventList.setOnRefreshListener(() -> presenter.onPullToRefresh());
-        layoutManager = new LinearLayoutManager(this);
-        rvEventsList.setLayoutManager(layoutManager);
-        rvEventsList.setHasFixedSize(false);
-        SimpleDividerItemDecoration dividerItemDecoration = new SimpleDividerItemDecoration(
-            rvEventsList.getContext());
-        rvEventsList.addItemDecoration(dividerItemDecoration);
-        rvEventsList.setAdapter(eventsAdapter);
+        this.customPagerAdapter = new CustomPagerAdapter(this, LocalDate.now(), pageAdapterCallback);
+        viewPager.setAdapter(customPagerAdapter);
+        viewPager.setCurrentItem(0);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                Log.d(TAG, "onPageSelected() " + position);
+                presenter.loadEvents(LocalDate.now().plusDays(position), position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+//        eventsAdapter = new EventsAdapter(position -> presenter.onListItemclicked(position));
+//        refreshEventList.setOnRefreshListener(() -> presenter.onPullToRefresh());
+//        layoutManager = new LinearLayoutManager(this);
+//        rvEventsList.setLayoutManager(layoutManager);
+//        rvEventsList.setHasFixedSize(false);
+//        SimpleDividerItemDecoration dividerItemDecoration = new SimpleDividerItemDecoration(
+//            rvEventsList.getContext());
+//        rvEventsList.addItemDecoration(dividerItemDecoration);
+//        rvEventsList.setAdapter(eventsAdapter);
     }
 
     @Override
     public void setItemsToRecycleView(List<EventItem> eventItemList) {
-        eventsAdapter.setItems(eventItemList);
+        customPagerAdapter.setItemsToRecycleView(eventItemList);
     }
 
     @Override
     public void hidePullToRefreshProgress() {
-        refreshEventList.setRefreshing(false);
+        customPagerAdapter.hidePullToRefreshProgress();
     }
+
+    @Override
+    public void showPullToRefreshProgress() {
+        customPagerAdapter.showPullToRefreshProgress();
+    }
+
+    private CustomPagerAdapter.PageAdapterCallback pageAdapterCallback = new CustomPagerAdapter.PageAdapterCallback() {
+        @Override
+        public void onListItemclicked(int position) {
+
+        }
+
+        @Override
+        public void onPullToRefresh(LocalDate localDate, Integer day) {
+            presenter.loadEvents(localDate, day);
+        }
+
+        @Override
+        public void loadEvents(LocalDate localDate, Integer day) {
+            presenter.loadEvents(localDate, day);
+        }
+    };
 }

@@ -1,5 +1,6 @@
 package org.wirbleibenalle.stressi.ui.model;
 
+import org.joda.time.LocalDate;
 import org.wirbleibenalle.stressi.data.model.EventRss;
 
 /**
@@ -12,6 +13,8 @@ public class EventItem {
     private String guid;
     private String pubDate;
     private String description;
+    private Integer day;
+    private LocalDate localDate;
 
     public EventItem() {
 
@@ -23,6 +26,32 @@ public class EventItem {
         setLink(eventRss.getLink());
         setPubDate(eventRss.getPubDate());
         setTitle(eventRss.getTitle());
+    }
+
+    public EventItem(EventRss eventRss, LocalDate localDate, Integer day) {
+        setDescription(eventRss.getDescription());
+        setGuid(eventRss.getGuid());
+        setLink(eventRss.getLink());
+        setPubDate(eventRss.getPubDate());
+        setTitle(eventRss.getTitle());
+        setLocalDate(localDate);
+        setDay(day);
+    }
+
+    public Integer getDay() {
+        return day;
+    }
+
+    public void setDay(Integer day) {
+        this.day = day;
+    }
+
+    public LocalDate getLocalDate() {
+        return localDate;
+    }
+
+    public void setLocalDate(LocalDate localDate) {
+        this.localDate = localDate;
     }
 
     public String getTitle() {

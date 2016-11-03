@@ -11,16 +11,23 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="org.wirbleibenalle.stressi.ui.main.MainActivity">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/refresh_events_list"
-        style="@style/MatchWidth"
-        android:visibility="visible">
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_events_list"
-            style="@style/Match"
-            android:clipToPadding="false"
-            />
+    <!--<android.support.v4.widget.SwipeRefreshLayout-->
+    <!--android:id="@+id/refresh_events_list"-->
+    <!--style="@style/MatchWidth"-->
+    <!--android:visibility="visible">-->
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    <!--<android.support.v7.widget.RecyclerView-->
+    <!--android:id="@+id/rv_events_list"-->
+    <!--style="@style/Match"-->
+    <!--android:clipToPadding="false"-->
+    <!--/>-->
+
+    <!--</android.support.v4.widget.SwipeRefreshLayout>-->
 </RelativeLayout>
