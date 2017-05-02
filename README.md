@@ -1,1 +1,2 @@
-# Stressi is a small android app loading from backend and showing cultural events in berlin
+#A small android app showing cultural events in berlin
+The backend is currently under constructio
