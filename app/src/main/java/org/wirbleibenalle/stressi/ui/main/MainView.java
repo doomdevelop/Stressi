@@ -17,4 +17,7 @@ public interface MainView extends Presenter.View {
     void hidePullToRefreshProgress(int day);
 
     void showPullToRefreshProgress(int day);
+
+    void setDateToTitle(String title);
+
 }

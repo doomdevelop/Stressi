@@ -11,7 +11,7 @@ import java.util.List;
 
 @Root(name = "channel", strict = false)
 public class ChannelRss {
-    @ElementList(inline = true, name = "item")
+    @ElementList(required = false,empty = false, inline = true, name = "item")
     private List<EventRss> eventRssList;
 
     public List<EventRss> getFeedItems() {

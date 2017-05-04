@@ -43,7 +43,6 @@ public class CustomPagerAdapter extends PagerAdapter {
         setPageTitle(localDate);
         this.context = context;
         this.pageAdapterCallback = pageAdapterCallback;
-//        pageAdapterCallback.loadEvents(LocalDate.now().plusDays(0), 0);
     }
 
     private void setPageTitle(LocalDate localDate) {
@@ -58,10 +57,8 @@ public class CustomPagerAdapter extends PagerAdapter {
         int position = eventItemList.get(0).getDay().intValue();
         Log.d(TAG, "setItemsToRecycleView() currentDay: " + eventsAdapter.getCurrentDay() +
             " eventItemList.get(0)" + ".getDay(): " + position);
-//        if (eventsAdapter.getCurrentDay().intValue() == eventItemList.get(0).getDay().intValue()) {
         viewHolderMap.get(position).eventsAdapter.setItems(eventItemList);
         notifyDataSetChanged();
-//        }
     }
 
     public void showPullToRefreshProgress(int day) {
@@ -99,9 +96,6 @@ public class CustomPagerAdapter extends PagerAdapter {
         if (collection.getChildCount() == 1) {
             pageAdapterCallback.loadEvents(LocalDate.now(), 0);
         }
-
-//        pageAdapterCallback.loadEvents(LocalDate.now().plusDays(position), position);
-
         return layout;
     }
 

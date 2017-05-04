@@ -65,35 +65,33 @@ public class MainActivity extends BaseActivity implements MainView {
 
     @Override
     public void initializeRecyclerView() {
-        this.customPagerAdapter = new CustomPagerAdapter(this, LocalDate.now(), pageAdapterCallback);
+        customPagerAdapter = new CustomPagerAdapter(this, LocalDate.now(), pageAdapterCallback);
         viewPager.setAdapter(customPagerAdapter);
         viewPager.setCurrentItem(0);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                //positionOffset by page change from 0.0-1.0
+                Log.d(TAG, "onPageScrolled() position " + position+" positionOffset: " +positionOffset+" positionOffsetPixels "+positionOffsetPixels);
+
 
             }
 
             @Override
             public void onPageSelected(int position) {
                 Log.d(TAG, "onPageSelected() " + position);
-                presenter.loadEvents(LocalDate.now().plusDays(position), position);
+                presenter.onSwitchDateByPosition(position);
+
+//                setDateToTitle(newDate.toString());
+//                presenter.loadEvents(newDate, position);
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
+                Log.d(TAG, "onPageSelected() state " + state);
 
             }
         });
-//        eventsAdapter = new EventsAdapter(position -> presenter.onListItemclicked(position));
-//        refreshEventList.setOnRefreshListener(() -> presenter.onPullToRefresh());
-//        layoutManager = new LinearLayoutManager(this);
-//        rvEventsList.setLayoutManager(layoutManager);
-//        rvEventsList.setHasFixedSize(false);
-//        SimpleDividerItemDecoration dividerItemDecoration = new SimpleDividerItemDecoration(
-//            rvEventsList.getContext());
-//        rvEventsList.addItemDecoration(dividerItemDecoration);
-//        rvEventsList.setAdapter(eventsAdapter);
     }
 
     @Override
@@ -109,6 +107,11 @@ public class MainActivity extends BaseActivity implements MainView {
     @Override
     public void showPullToRefreshProgress(int day) {
         customPagerAdapter.showPullToRefreshProgress(day);
+    }
+
+    @Override
+    public void setDateToTitle(String title) {
+        setTitle(title);
     }
 
     private CustomPagerAdapter.PageAdapterCallback pageAdapterCallback = new CustomPagerAdapter.PageAdapterCallback() {

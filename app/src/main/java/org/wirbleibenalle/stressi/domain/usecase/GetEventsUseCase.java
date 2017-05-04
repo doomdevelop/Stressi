@@ -13,18 +13,24 @@ import rx.Observable;
 
 public class GetEventsUseCase extends UseCase {
     private DataRepository dataRepository;
-    private final LocalDate localDate;
-    private final Integer day;
+    private  LocalDate localDate;
+    private Integer position;
 
     @Inject
-    public GetEventsUseCase(DataRepository dataRepository, LocalDate localDate, Integer day) {
+    public GetEventsUseCase(DataRepository dataRepository) {
         this.dataRepository = dataRepository;
-        this.localDate = localDate;
-        this.day = day;
     }
 
     @Override
     protected Observable buildUseCaseObservable() {
-        return dataRepository.getEvents(localDate, day);
+        return dataRepository.getEvents(localDate, position);
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    public void setLocalDate(LocalDate localDate) {
+        this.localDate = localDate;
     }
 }

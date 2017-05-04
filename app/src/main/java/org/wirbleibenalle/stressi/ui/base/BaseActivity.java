@@ -3,8 +3,13 @@ package org.wirbleibenalle.stressi.ui.base;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.TextView;
 
+import org.wirbleibenalle.stressi.stressfaktor.R;
+
+import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
@@ -12,7 +17,11 @@ import butterknife.ButterKnife;
  */
 
 public abstract class BaseActivity extends AppCompatActivity implements Presenter.View {
-
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+    @Bind(R.id.txt_toolbar_title)
+    protected
+    TextView tvTitle;
     protected Presenter presenter;
 
     protected abstract void initializeDagger();
@@ -30,11 +39,18 @@ public abstract class BaseActivity extends AppCompatActivity implements Presente
         initializeButterKnife();
         initializeDagger();
         initializePresenter();
-
-//        if (presenter != null) {
+        initializeToolbar();
         presenter.initialize(getIntent().getExtras());
-//        }
     }
+
+    protected void initializeToolbar() {
+        setSupportActionBar(toolbar);
+    }
+
+    protected void setTitle(String title) {
+        tvTitle.setText(title);
+    }
+
 
     @Override
     protected void onStart() {

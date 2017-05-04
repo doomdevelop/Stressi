@@ -14,7 +14,7 @@ apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.2"
+    buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "stressi.wirbleibenalle.org.stressfaktor"
         minSdkVersion 15
@@ -23,15 +23,31 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        release {
+            storeFile file('HelloConfig.keystore')
+            keyAlias 'HelloConfig'
+            storePassword 'laser.yams.heady.testy'
+            keyPassword 'fw.stabs.steady.wool'
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            applicationIdSuffix ".d"
+            versionNameSuffix "-debug"
         }
     }
     compileOptions {
         sourceCompatibility 8
         targetCompatibility 8
+    }
+    testOptions {
+        unitTests.returnDefaultValues = true
     }
 }
 
@@ -42,12 +58,10 @@ dependencies {
     compile 'com.android.support:design:24.2.1'
     compile 'com.android.support:support-v4:24.2.1'
 //    compile 'com.github.lsjwzh.RecyclerViewPager:lib:v1.0.0'
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+
     compile 'com.android.support:recyclerview-v7:24.2.1'
     compile 'com.android.support:appcompat-v7:24.2.1'
-    testCompile 'junit:junit:4.12'
+
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     //    compile 'com.squareup.retrofit2:converter-simplexml:2.1.0'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
@@ -63,7 +77,15 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile 'javax.annotation:javax.annotation-api:1.2'
 
-    compile('com.squareup.retrofit2:converter-simplexml:2.1.0') {
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
+
+
+compile('com.squareup.retrofit2:converter-simplexml:2.1.0') {
         exclude group: 'xpp3', module: 'xpp3'
         exclude group: 'stax', module: 'stax-api'
         exclude group: 'stax', module: 'stax'
