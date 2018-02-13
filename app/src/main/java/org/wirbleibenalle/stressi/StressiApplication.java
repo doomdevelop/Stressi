@@ -14,13 +14,11 @@ import org.wirbleibenalle.stressi.ui.MainComponent;
 
 public class StressiApplication extends Application {
     private MainComponent mainComponent;
-    private Context context;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        mainComponent = DaggerMainComponent.create();
-        context = getApplicationContext();
+        mainComponent = DaggerMainComponent.builder().mainModule(new MainModule(getApplicationContext())).build();
         JodaTimeAndroid.init(this);
     }
 

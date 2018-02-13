@@ -13,7 +13,9 @@ import android.view.ViewGroup;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.wirbleibenalle.stressi.data.model.Events;
 import org.wirbleibenalle.stressi.stressfaktor.R;
+import org.wirbleibenalle.stressi.ui.component.main.EventItemViewHolder.EventItemViewHolderListener;
 import org.wirbleibenalle.stressi.ui.component.main.EventsAdapter;
 import org.wirbleibenalle.stressi.ui.component.main.SimpleDividerItemDecoration;
 import org.wirbleibenalle.stressi.ui.model.EventItem;
@@ -30,19 +32,21 @@ public class CustomPagerAdapter extends PagerAdapter {
     private String pageTitle;
     private final Context context;
     private final PageAdapterCallback pageAdapterCallback;
-    SwipeRefreshLayout refreshEventList;
-    RecyclerView rvEventsList;
-    EventsAdapter eventsAdapter = null;
-    LinearLayoutManager layoutManager;
+    private final EventItemViewHolderListener eventItemViewHolderListener;
+    private SwipeRefreshLayout refreshEventList;
+    private RecyclerView rvEventsList;
+    private EventsAdapter eventsAdapter = null;
+    private LinearLayoutManager layoutManager;
     private Map<Integer, ViewHolder> viewHolderMap = new HashMap<>();
     private static final String TAG = CustomPagerAdapter.class.getSimpleName();
 
     public CustomPagerAdapter(Context context, LocalDate localDate, PageAdapterCallback
-        pageAdapterCallback) {
+            pageAdapterCallback, EventItemViewHolderListener eventItemViewHolderListener) {
         Log.d(TAG, "constructor CustomPagerAdapter()");
         setPageTitle(localDate);
         this.context = context;
         this.pageAdapterCallback = pageAdapterCallback;
+        this.eventItemViewHolderListener = eventItemViewHolderListener;
     }
 
     private void setPageTitle(LocalDate localDate) {
@@ -50,35 +54,41 @@ public class CustomPagerAdapter extends PagerAdapter {
         this.pageTitle = localDate.toString(formatter);
     }
 
-    public void setItemsToRecycleView(List<EventItem> eventItemList) {
-        if (eventItemList == null || eventItemList.size() <= 0) {
+    public void setItemsToRecycleView(List<EventItem> events, int position) {
+        if (events == null || events == null || events.size() <= 0) {
             return;
         }
-        int position = eventItemList.get(0).getDay().intValue();
         Log.d(TAG, "setItemsToRecycleView() currentDay: " + eventsAdapter.getCurrentDay() +
-            " eventItemList.get(0)" + ".getDay(): " + position);
-        viewHolderMap.get(position).eventsAdapter.setItems(eventItemList);
+                " eventItemList.get(0)");
+        viewHolderMap.get(position).eventsAdapter.setItems(events);
         notifyDataSetChanged();
     }
 
-    public void showPullToRefreshProgress(int day) {
-        viewHolderMap.get(day).refreshEventList.setRefreshing(true);
+    public boolean containItemsInRecycleView(int position){
+        if(viewHolderMap.containsKey(position) && viewHolderMap.get(position).eventsAdapter.getEventItemList().size()>0){
+//            notifyDataSetChanged();
+            return true;
+        }
+        return false;
     }
 
-    public void hidePullToRefreshProgress(int day) {
-        viewHolderMap.get(day).refreshEventList.setRefreshing(false);
+    public void showPullToRefreshProgress(int position) {
+        viewHolderMap.get(position).refreshEventList.setRefreshing(true);
+    }
+
+    public void hidePullToRefreshProgress(int position) {
+        viewHolderMap.get(position).refreshEventList.setRefreshing(false);
     }
 
     private void initializeRecyclerView(Integer currentDay) {
-        eventsAdapter = new EventsAdapter(position -> pageAdapterCallback.onListItemclicked(position));
+        eventsAdapter = new EventsAdapter(position -> pageAdapterCallback.onListItemclicked(position), eventItemViewHolderListener);
         eventsAdapter.setCurrentDay(currentDay);
-        refreshEventList.setOnRefreshListener(() -> pageAdapterCallback.onPullToRefresh
-            (LocalDate.now().plusDays(currentDay), currentDay));
+        refreshEventList.setOnRefreshListener(() -> pageAdapterCallback.onPullToRefresh());
         layoutManager = new LinearLayoutManager(context);
         rvEventsList.setLayoutManager(layoutManager);
         rvEventsList.setHasFixedSize(false);
         SimpleDividerItemDecoration dividerItemDecoration = new SimpleDividerItemDecoration(
-            rvEventsList.getContext());
+                rvEventsList.getContext());
         rvEventsList.addItemDecoration(dividerItemDecoration);
         rvEventsList.setAdapter(eventsAdapter);
     }
@@ -91,11 +101,11 @@ public class CustomPagerAdapter extends PagerAdapter {
         refreshEventList = (SwipeRefreshLayout) layout.findViewById(R.id.refresh_events_list);
         rvEventsList = (RecyclerView) layout.findViewById(R.id.rv_events_list);
         initializeRecyclerView(position);
+        if (viewHolderMap.size() == 0) {
+            refreshEventList.setRefreshing(true);
+        }
         viewHolderMap.put(position, new ViewHolder(refreshEventList, rvEventsList, eventsAdapter));
         collection.addView(layout);
-        if (collection.getChildCount() == 1) {
-            pageAdapterCallback.loadEvents(LocalDate.now(), 0);
-        }
         return layout;
     }
 
@@ -136,8 +146,6 @@ public class CustomPagerAdapter extends PagerAdapter {
     public interface PageAdapterCallback {
         void onListItemclicked(int position);
 
-        void onPullToRefresh(LocalDate localDate, Integer day);
-
-        void loadEvents(LocalDate localDate, Integer day);
+        void onPullToRefresh();
     }
 }

@@ -2,6 +2,7 @@ package org.wirbleibenalle.stressi.data.repository;
 
 
 import org.joda.time.LocalDate;
+import org.wirbleibenalle.stressi.data.model.Events;
 import org.wirbleibenalle.stressi.domain.observer.DefaultObserver;
 import org.wirbleibenalle.stressi.domain.usecase.GetEventsUseCase;
 import org.wirbleibenalle.stressi.domain.usecase.UseCase;
@@ -30,6 +31,6 @@ public class DataRepository {
     }
 
     public Observable<List<EventItem>> getEvents(LocalDate localDate, Integer day) {
-        return apiRepository.getEvents(localDate, day);
+        return apiRepository.getEvents(localDate);
     }
 }

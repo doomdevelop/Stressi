@@ -5,5 +5,5 @@ package org.wirbleibenalle.stressi.util;
  */
 
 public interface Constants {
-    String BASE_URL = "http://stressi.wirbleibenalle.org/?t=RSS2&d=";
+    String BASE_URL = "https://stressfaktor.squat.net/";
 }

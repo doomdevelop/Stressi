@@ -14,7 +14,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.internal.matchers.CapturesArguments;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.wirbleibenalle.stressi.data.model.EventRss;
 import org.wirbleibenalle.stressi.data.repository.DataRepository;
 import org.wirbleibenalle.stressi.domain.observer.DefaultObserver;
 import org.wirbleibenalle.stressi.domain.usecase.GetEventsUseCase;
@@ -68,49 +67,5 @@ public class MainPresenterTest {
         JodaTimeAndroid.init(context);
         mainPresenter = new MainPresenter(mockGetEventsUseCase);
         mainPresenter.setView(mainView);
-    }
-
-
-
-    @Test
-    public void testSwitchDateByPosition(){
-        LocalDate nowLocalDate = LocalDate.now();
-        int day = 1;
-        List<EventItem> evenItemList = new ArrayList<>();
-        EventRss eventRss = new EventRss();
-        eventRss.setDescription("Description");
-        eventRss.setGuid("000000");
-        eventRss.setLink("http");
-        eventRss.setPubDate("date");
-        eventRss.setTitle("title");
-        evenItemList.add(new EventItem(eventRss,nowLocalDate.plusDays(day),day));
-        mainPresenter.onSwitchDateByPosition(1);
-        verify(mockGetEventsUseCase).execute(any(Observer.class));
-    }
-
-    @Test
-    public void testCovertEventRssToEventItem(){
-        LocalDate nowLocalDate = LocalDate.now();
-        Integer day = 1;
-        String description = "Description";
-        String guid = "Guid";
-        String link = "Link";
-        String pubDate = "PubDate";
-        String title ="title";
-        EventRss eventRss = new EventRss();
-        eventRss.setDescription(description);
-        eventRss.setGuid(guid);
-        eventRss.setLink(link);
-        eventRss.setPubDate(pubDate);
-        eventRss.setTitle(title);
-
-        EventItem eventItem = new EventItem(eventRss,nowLocalDate,day);
-        assertEquals(eventItem.getDescription(),description);
-        assertEquals(eventItem.getTitle(),title);
-        assertEquals(eventItem.getGuid(),guid);
-        assertEquals(eventItem.getLink(),link);
-        assertEquals(eventItem.getPubDate(),pubDate);
-        assertEquals(eventItem.getDay(),day);
-
     }
 }

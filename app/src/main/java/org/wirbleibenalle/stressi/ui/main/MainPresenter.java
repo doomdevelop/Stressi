@@ -1,13 +1,13 @@
 package org.wirbleibenalle.stressi.ui.main;
 
 import android.os.Bundle;
+import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 import org.joda.time.LocalDate;
-import org.wirbleibenalle.stressi.data.repository.DataRepository;
+import org.wirbleibenalle.stressi.data.model.Events;
 import org.wirbleibenalle.stressi.domain.observer.DefaultObserver;
 import org.wirbleibenalle.stressi.domain.usecase.GetEventsUseCase;
-import org.wirbleibenalle.stressi.domain.usecase.UseCase;
 import org.wirbleibenalle.stressi.ui.base.Presenter;
 import org.wirbleibenalle.stressi.ui.model.EventItem;
 
@@ -15,17 +15,14 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import rx.Observer;
-
 /**
  * Created by and on 26.10.16.
  */
 
 public class MainPresenter extends Presenter<MainView> {
     private static final String TAG = MainPresenter.class.getSimpleName();
-    private GetEventsUseCase getEventsUseCase;
+    private final GetEventsUseCase getEventsUseCase;
     private LocalDate currentLocalDate;
-    private Integer currentDay = new Integer(0);
     private int currentPosition;
 
 
@@ -34,7 +31,7 @@ public class MainPresenter extends Presenter<MainView> {
         this.getEventsUseCase = getEventsUseCase;
     }
 
-    public void onSwitchDateByPosition(int position) {
+    void onSwitchDateByPosition(int position) {
         Log.d(TAG,"position="+position+" currentPosition="+currentPosition);
         if(position == currentPosition){
             return;
@@ -46,24 +43,27 @@ public class MainPresenter extends Presenter<MainView> {
             currentLocalDate = currentLocalDate.minusDays(currentPosition-position);
         }
         currentPosition = position;
-        getEventsUseCase.setLocalDate(currentLocalDate);
-        getEventsUseCase.setPosition(position);
-        getEventsUseCase.execute(new LoadEventObserver(currentLocalDate,position));
+        view.setDateToTitle(currentLocalDate.toString());
     }
 
-    public void loadEvents(final LocalDate localDate, final Integer day) {
-        getEventsUseCase.setLocalDate(localDate);
-        getEventsUseCase.setPosition(day);
+    void loadEvents() {
+        executeCall();
+    }
+
+    @VisibleForTesting
+    void executeCall(){
+        getEventsUseCase.setLocalDate(currentLocalDate);
+        getEventsUseCase.setPosition(currentPosition);
         getEventsUseCase.unsubscribe();
-        getEventsUseCase.execute(new LoadEventObserver(localDate,day));
+        getEventsUseCase.execute(new LoadEventObserver(currentLocalDate,currentPosition));
     }
 
     public class LoadEventObserver extends DefaultObserver<List<EventItem>>{
-        private final int day;
+        private final int position;
         private final LocalDate localDate;
 
-        public LoadEventObserver(LocalDate localDate, int day) {
-            this.day = day;
+        public LoadEventObserver(LocalDate localDate, int position) {
+            this.position = position;
             this.localDate = localDate;
         }
 
@@ -76,23 +76,26 @@ public class MainPresenter extends Presenter<MainView> {
         public void onError(Throwable e) {
             super.onError(e);
             Log.d(TAG, e.getMessage());
-            view.hidePullToRefreshProgress(day);
+            view.hidePullToRefreshProgress(position);
             //TODO: implement error case
         }
 
         @Override
-        public void onNext(List<EventItem> eventItemList) {
-            super.onNext(eventItemList);
-            Log.d(TAG, "onNext : day" + day);
-            view.setItemsToRecycleView(eventItemList);
-            view.hidePullToRefreshProgress(day);
-            view.setDateToTitle(localDate.toString());
+        public void onNext(List<EventItem> events) {
+            super.onNext(events);
+            Log.d(TAG, "onNext : position" + position);
+//            view.setDateToTitle(localDate.toString());
+            view.setItemsToRecycleView(events, position);
+            view.hidePullToRefreshProgress(position);
         }
     }
     @Override
     public void initialize(Bundle extras) {
         super.initialize(extras);
-        view.initializeRecyclerView();
-//        loadEvents(initLocalDate,currentDay);
+        currentLocalDate = LocalDate.now();
+        currentPosition = Integer.MAX_VALUE / 2;
+        view.setDateToTitle(currentLocalDate.toString());
+        view.initializeViewComponents(currentPosition);
+        loadEvents();
     }
 }

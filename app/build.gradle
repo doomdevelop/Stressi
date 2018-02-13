@@ -77,6 +77,8 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile 'javax.annotation:javax.annotation-api:1.2'
 
+    compile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
+
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.10.19'
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -84,10 +86,10 @@ dependencies {
     })
 
 
-
-compile('com.squareup.retrofit2:converter-simplexml:2.1.0') {
+    compile('com.squareup.retrofit2:converter-simplexml:2.1.0') {
         exclude group: 'xpp3', module: 'xpp3'
         exclude group: 'stax', module: 'stax-api'
         exclude group: 'stax', module: 'stax'
     }
+    compile 'pl.droidsonroids.retrofit2:converter-jspoon:1.2.0'
 }

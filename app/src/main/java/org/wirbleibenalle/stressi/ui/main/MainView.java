@@ -1,5 +1,6 @@
 package org.wirbleibenalle.stressi.ui.main;
 
+import org.wirbleibenalle.stressi.data.model.Events;
 import org.wirbleibenalle.stressi.ui.base.Presenter;
 import org.wirbleibenalle.stressi.ui.model.EventItem;
 
@@ -10,9 +11,9 @@ import java.util.List;
  */
 
 public interface MainView extends Presenter.View {
-    void initializeRecyclerView();
+    void initializeViewComponents(int position);
 
-    void setItemsToRecycleView(List<EventItem> eventItemList);
+    void setItemsToRecycleView(List<EventItem> events, int position);
 
     void hidePullToRefreshProgress(int day);
 

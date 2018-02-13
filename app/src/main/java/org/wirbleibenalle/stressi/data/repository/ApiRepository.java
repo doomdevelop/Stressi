@@ -1,10 +1,10 @@
 package org.wirbleibenalle.stressi.data.repository;
 
 import org.joda.time.LocalDate;
-import org.wirbleibenalle.stressi.data.mapper.EventMapper;
-import org.wirbleibenalle.stressi.data.model.RSS;
+import org.wirbleibenalle.stressi.data.model.Events;
 import org.wirbleibenalle.stressi.data.remote.ServiceGenerator;
 import org.wirbleibenalle.stressi.data.remote.service.EventService;
+import org.wirbleibenalle.stressi.data.transformer.Transformer;
 import org.wirbleibenalle.stressi.ui.model.EventItem;
 
 import java.util.List;
@@ -22,23 +22,21 @@ import static org.wirbleibenalle.stressi.util.Constants.BASE_URL;
  */
 @Singleton
 public class ApiRepository {
-    private ServiceGenerator serviceGenerator;
+    private final EventService eventService;
+    private final Transformer<Events,List<EventItem>> transformer;
 
     @Inject
-    public ApiRepository(ServiceGenerator serviceGenerator) {
-        this.serviceGenerator = serviceGenerator;
+    public ApiRepository(ServiceGenerator serviceGenerator,Transformer<Events, List<EventItem>> transformer ) {
+        this.eventService = serviceGenerator.createService(EventService.class);
+        this.transformer = transformer;
     }
 
-    public Observable<List<EventItem>> getEvents(LocalDate localDate, Integer day) {
-        EventService eventService = serviceGenerator.createService(EventService.class, BASE_URL);
-        return eventService.getEvents(BASE_URL + day).map(generateTransformFunction(localDate, day));
+    public Observable<List<EventItem>> getEvents(LocalDate localDate) {
+        return eventService.getEvents(localDate.toString()).map(generateTransformFunction());
     }
 
-
-    private Func1<RSS, List<EventItem>> generateTransformFunction(LocalDate localDate, Integer day) {
-        Func1<RSS, List<EventItem>> transformFunction = rss -> new EventMapper(localDate, day)
-            .transform(rss);
+    private Func1<Events, List<EventItem>> generateTransformFunction() {
+        Func1<Events, List<EventItem>> transformFunction = events -> transformer.transform(events);
         return transformFunction;
     }
-
 }

@@ -34,7 +34,7 @@ public abstract class Presenter<T extends Presenter.View> {
     }
 
     public void finalizeView() {
-        isViewAlive.set(false);
+            isViewAlive.set(false);
     }
 
 //    public void onSettingsClick() {
@@ -51,10 +51,6 @@ public abstract class Presenter<T extends Presenter.View> {
     }
 
     public interface View {
-        void start();
-
-        void finish();
-
         void showError(String errorMessage);
     }
 }

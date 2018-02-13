@@ -1,31 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:paddingBottom="3dp"
-              android:paddingTop="3dp">
-
-    <TextView
-        android:id="@+id/event_time"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="30"/>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="6dp"
+    android:paddingTop="6dp">
 
     <RelativeLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="70">
+        android:id="@+id/event_time_place_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/event_title"
-            android:layout_width="match_parent"
+            android:id="@+id/event_time"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"/>
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="40dp"
+            android:textStyle="bold"
+            tools:text="23;34" />
 
         <TextView
-            android:id="@+id/event_description"
-            android:layout_width="match_parent"
+            android:id="@+id/event_place"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/event_title"/>
+            android:textStyle="bold"
+            android:layout_toRightOf="@+id/event_time"
+            tools:text="dfdfdfdfdfdfdfdfdfdfdfdfdfdfdfd"/>
+        <ImageView
+            android:id="@+id/event_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_share"
+            android:layout_alignParentRight="true"
+            />
     </RelativeLayout>
-</LinearLayout>
+    <TextView
+        android:id="@+id/event_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/event_time_place_layout"
+        android:layout_marginTop="4dp"
+
+        tools:text="effsffsfsffsdfsdfdsfdsgdsgdsgdsgdsgdsgdsgdsgdsg"/>
+
+    <TextView
+        android:id="@+id/event_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/event_address"
+        android:layout_marginTop="4dp"
+        tools:text="effsffsfsffsdfsdfdsfdsgdsgdsgdsgdsgdsgdsgdsgdsg"/>
+
+</RelativeLayout>

@@ -10,7 +10,6 @@ import rx.Observable;
 /**
  * Created by and on 26.10.16.
  */
-
 public class GetEventsUseCase extends UseCase {
     private DataRepository dataRepository;
     private  LocalDate localDate;

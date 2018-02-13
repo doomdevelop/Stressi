@@ -1,5 +1,6 @@
 package org.wirbleibenalle.stressi.ui.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -8,6 +9,7 @@ import org.joda.time.LocalDate;
 import org.wirbleibenalle.stressi.StressiApplication;
 import org.wirbleibenalle.stressi.stressfaktor.R;
 import org.wirbleibenalle.stressi.ui.base.BaseActivity;
+import org.wirbleibenalle.stressi.ui.component.main.EventItemViewHolder;
 import org.wirbleibenalle.stressi.ui.component.pageView.CustomPagerAdapter;
 import org.wirbleibenalle.stressi.ui.model.EventItem;
 
@@ -17,7 +19,8 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 
-public class MainActivity extends BaseActivity implements MainView {
+public class MainActivity extends BaseActivity implements MainView,EventItemViewHolder.EventItemViewHolderListener {
+
     @Inject
     MainPresenter presenter;
     @Bind(R.id.viewpager)
@@ -40,7 +43,6 @@ public class MainActivity extends BaseActivity implements MainView {
     @Override
     protected void onResume() {
         super.onResume();
-//        presenter.onResumed();
     }
 
     @Override
@@ -54,49 +56,43 @@ public class MainActivity extends BaseActivity implements MainView {
     }
 
     @Override
-    public void start() {
-
-    }
-
-    @Override
     public void showError(String errorMessage) {
 
     }
 
     @Override
-    public void initializeRecyclerView() {
-        customPagerAdapter = new CustomPagerAdapter(this, LocalDate.now(), pageAdapterCallback);
+    public void initializeViewComponents(int position) {
+        customPagerAdapter = new CustomPagerAdapter(this, LocalDate.now(), pageAdapterCallback, this);
         viewPager.setAdapter(customPagerAdapter);
-        viewPager.setCurrentItem(0);
+        viewPager.setCurrentItem(position);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 //positionOffset by page change from 0.0-1.0
                 Log.d(TAG, "onPageScrolled() position " + position+" positionOffset: " +positionOffset+" positionOffsetPixels "+positionOffsetPixels);
-
-
             }
 
             @Override
             public void onPageSelected(int position) {
                 Log.d(TAG, "onPageSelected() " + position);
                 presenter.onSwitchDateByPosition(position);
-
-//                setDateToTitle(newDate.toString());
-//                presenter.loadEvents(newDate, position);
+                if(!customPagerAdapter.containItemsInRecycleView(position)){
+                    customPagerAdapter.showPullToRefreshProgress(position);
+                    presenter.loadEvents();
+                }
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
                 Log.d(TAG, "onPageSelected() state " + state);
-
             }
         });
     }
 
     @Override
-    public void setItemsToRecycleView(List<EventItem> eventItemList) {
-        customPagerAdapter.setItemsToRecycleView(eventItemList);
+    public void setItemsToRecycleView(List<EventItem> events, int position) {
+        customPagerAdapter.setItemsToRecycleView(events,position);
+        Log.d("MainActivity","size events: "+events.size());
     }
 
     @Override
@@ -121,13 +117,23 @@ public class MainActivity extends BaseActivity implements MainView {
         }
 
         @Override
-        public void onPullToRefresh(LocalDate localDate, Integer day) {
-            presenter.loadEvents(localDate, day);
-        }
-
-        @Override
-        public void loadEvents(LocalDate localDate, Integer day) {
-            presenter.loadEvents(localDate, day);
+        public void onPullToRefresh() {
+            presenter.loadEvents();
         }
     };
+
+    @Override
+    public void onShareClicked(EventItem eventItem ) {
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        String shareBody = eventItem.getTime()+" | "+eventItem.getPlace()+" | "+eventItem.getAddress();
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, shareBody);
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody+"\n"+eventItem.getDescription());
+        startActivity(Intent.createChooser(sharingIntent, "Share via"));
+    }
+
+    @Override
+    public void showOnGoogleMap(EventItem eventItem ) {
+
+    }
 }
