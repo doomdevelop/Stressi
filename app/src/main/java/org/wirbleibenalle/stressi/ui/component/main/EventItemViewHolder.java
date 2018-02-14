@@ -47,8 +47,6 @@ public class EventItemViewHolder extends RecyclerView.ViewHolder {
         tvAddress.setText(eventItem.getAddress());
 
         ivShare.setOnClickListener(v -> eventItemViewHolderListener.onShareClicked(eventItem));
-//        viewInspectionSummary.setBackgroundResource(R.drawable.bg_inspection_item);
-//        viewInspectionSummary.renderInspectionSummary(eventItem);
         itemView.setOnClickListener(v -> onRowClickListener.onItemSelected(position));
     }
 

@@ -3,6 +3,10 @@ package org.wirbleibenalle.stressi;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import org.wirbleibenalle.stressi.data.cache.CacheController;
+import org.wirbleibenalle.stressi.data.cache.CacheInterceptor;
+import org.wirbleibenalle.stressi.data.cache.EventCacheController;
+import org.wirbleibenalle.stressi.data.model.CacheEvent;
 import org.wirbleibenalle.stressi.data.model.Events;
 import org.wirbleibenalle.stressi.data.remote.ServiceGenerator;
 import org.wirbleibenalle.stressi.data.repository.LocalRepository;
@@ -46,7 +50,7 @@ public class MainModule {
     @Provides
     @Singleton
     public SharedPreferences provideSharedPreferences(Context context) {
-        return this.context.getSharedPreferences(SHARE_PREF_NAME,0);
+        return context.getSharedPreferences(SHARE_PREF_NAME,0);
     }
 
     @Provides
@@ -64,14 +68,21 @@ public class MainModule {
 
     @Provides
     @Singleton
+    public CacheController<CacheEvent> provideCacheController(SharedPreferences sharedPreferences){
+        return new EventCacheController(sharedPreferences);
+    }
+
+    @Provides
+    @Singleton
     public Builder provideBuilder(){
         return new OkHttpClient.Builder();
     }
 
     @Provides
     @Singleton
-    public OkHttpClient provideOkHttpClient(Builder builder){
+    public OkHttpClient provideOkHttpClient(Builder builder, CacheController<CacheEvent> cacheController){
 //        addLoggingInterceptor(builder);
+        addCacheInterceptor(builder,cacheController);
         OkHttpClient client = builder.build();
         return client;
     }
@@ -92,6 +103,11 @@ public class MainModule {
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         builder.addInterceptor(httpLoggingInterceptor);
+    }
+
+    private void addCacheInterceptor(final OkHttpClient.Builder builder,CacheController cacheController){
+        CacheInterceptor cacheInterceptor = new CacheInterceptor(cacheController);
+        builder.addInterceptor(cacheInterceptor);
     }
 
     @Provides

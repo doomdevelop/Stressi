@@ -1,6 +1,7 @@
 package org.wirbleibenalle.stressi.ui.component.pageView;
 
 import android.content.Context;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -64,20 +65,21 @@ public class CustomPagerAdapter extends PagerAdapter {
         notifyDataSetChanged();
     }
 
-    public boolean containItemsInRecycleView(int position){
-        if(viewHolderMap.containsKey(position) && viewHolderMap.get(position).eventsAdapter.getEventItemList().size()>0){
-//            notifyDataSetChanged();
-            return true;
-        }
-        return false;
+    @VisibleForTesting
+    boolean containViewHolder(int position){
+        return viewHolderMap.containsKey(position);
     }
 
     public void showPullToRefreshProgress(int position) {
-        viewHolderMap.get(position).refreshEventList.setRefreshing(true);
+        if(containViewHolder(position)) {
+            viewHolderMap.get(position).refreshEventList.setRefreshing(true);
+        }
     }
 
     public void hidePullToRefreshProgress(int position) {
-        viewHolderMap.get(position).refreshEventList.setRefreshing(false);
+        if(containViewHolder(position)) {
+            viewHolderMap.get(position).refreshEventList.setRefreshing(false);
+        }
     }
 
     private void initializeRecyclerView(Integer currentDay) {

@@ -19,7 +19,7 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 
-public class MainActivity extends BaseActivity implements MainView,EventItemViewHolder.EventItemViewHolderListener {
+public class MainActivity extends BaseActivity implements MainView, EventItemViewHolder.EventItemViewHolderListener {
 
     @Inject
     MainPresenter presenter;
@@ -28,6 +28,7 @@ public class MainActivity extends BaseActivity implements MainView,EventItemView
     private static final String TAG = CustomPagerAdapter.class.getSimpleName();
 
     private CustomPagerAdapter customPagerAdapter;
+
     @Override
     protected void initializeDagger() {
         StressiApplication app = (StressiApplication) getApplication();
@@ -69,17 +70,13 @@ public class MainActivity extends BaseActivity implements MainView,EventItemView
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 //positionOffset by page change from 0.0-1.0
-                Log.d(TAG, "onPageScrolled() position " + position+" positionOffset: " +positionOffset+" positionOffsetPixels "+positionOffsetPixels);
+                Log.d(TAG, "onPageScrolled() position " + position + " positionOffset: " + positionOffset + " positionOffsetPixels " + positionOffsetPixels);
             }
 
             @Override
             public void onPageSelected(int position) {
                 Log.d(TAG, "onPageSelected() " + position);
-                presenter.onSwitchDateByPosition(position);
-                if(!customPagerAdapter.containItemsInRecycleView(position)){
-                    customPagerAdapter.showPullToRefreshProgress(position);
-                    presenter.loadEvents();
-                }
+                presenter.onPageSelected(position);
             }
 
             @Override
@@ -91,8 +88,8 @@ public class MainActivity extends BaseActivity implements MainView,EventItemView
 
     @Override
     public void setItemsToRecycleView(List<EventItem> events, int position) {
-        customPagerAdapter.setItemsToRecycleView(events,position);
-        Log.d("MainActivity","size events: "+events.size());
+        customPagerAdapter.setItemsToRecycleView(events, position);
+        Log.d("MainActivity", "size events: " + events.size());
     }
 
     @Override
@@ -123,17 +120,17 @@ public class MainActivity extends BaseActivity implements MainView,EventItemView
     };
 
     @Override
-    public void onShareClicked(EventItem eventItem ) {
+    public void onShareClicked(EventItem eventItem) {
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
-        String shareBody = eventItem.getTime()+" | "+eventItem.getPlace()+" | "+eventItem.getAddress();
+        String shareBody = eventItem.getTime() + " | " + eventItem.getPlace() + " | " + eventItem.getAddress();
         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, shareBody);
-        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody+"\n"+eventItem.getDescription());
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody + "\n" + eventItem.getDescription());
         startActivity(Intent.createChooser(sharingIntent, "Share via"));
     }
 
     @Override
-    public void showOnGoogleMap(EventItem eventItem ) {
+    public void showOnGoogleMap(EventItem eventItem) {
 
     }
 }

@@ -2,6 +2,7 @@ package org.wirbleibenalle.stressi.ui.main;
 
 import android.os.Bundle;
 import android.support.annotation.VisibleForTesting;
+import android.support.v4.view.ViewCompat;
 import android.util.Log;
 
 import org.joda.time.LocalDate;
@@ -31,6 +32,12 @@ public class MainPresenter extends Presenter<MainView> {
         this.getEventsUseCase = getEventsUseCase;
     }
 
+    void onPageSelected(int position){
+        onSwitchDateByPosition(position);
+        view.showPullToRefreshProgress(position);
+        loadEvents();
+    }
+    @VisibleForTesting
     void onSwitchDateByPosition(int position) {
         Log.d(TAG,"position="+position+" currentPosition="+currentPosition);
         if(position == currentPosition){
@@ -84,7 +91,6 @@ public class MainPresenter extends Presenter<MainView> {
         public void onNext(List<EventItem> events) {
             super.onNext(events);
             Log.d(TAG, "onNext : position" + position);
-//            view.setDateToTitle(localDate.toString());
             view.setItemsToRecycleView(events, position);
             view.hidePullToRefreshProgress(position);
         }
