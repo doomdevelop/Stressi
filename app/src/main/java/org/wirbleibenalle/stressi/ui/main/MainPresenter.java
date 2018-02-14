@@ -2,11 +2,10 @@ package org.wirbleibenalle.stressi.ui.main;
 
 import android.os.Bundle;
 import android.support.annotation.VisibleForTesting;
-import android.support.v4.view.ViewCompat;
 import android.util.Log;
 
 import org.joda.time.LocalDate;
-import org.wirbleibenalle.stressi.data.model.Events;
+import org.wirbleibenalle.stressi.data.cache.EventCacheController;
 import org.wirbleibenalle.stressi.domain.observer.DefaultObserver;
 import org.wirbleibenalle.stressi.domain.usecase.GetEventsUseCase;
 import org.wirbleibenalle.stressi.ui.base.Presenter;
@@ -23,19 +22,21 @@ import javax.inject.Inject;
 public class MainPresenter extends Presenter<MainView> {
     private static final String TAG = MainPresenter.class.getSimpleName();
     private final GetEventsUseCase getEventsUseCase;
+    private final EventCacheController eventCacheController;
     private LocalDate currentLocalDate;
     private int currentPosition;
 
 
     @Inject
-    public MainPresenter(GetEventsUseCase getEventsUseCase) {
+    public MainPresenter(GetEventsUseCase getEventsUseCase, EventCacheController eventCacheController) {
         this.getEventsUseCase = getEventsUseCase;
+        this.eventCacheController = eventCacheController;
     }
 
     void onPageSelected(int position){
         onSwitchDateByPosition(position);
         view.showPullToRefreshProgress(position);
-        loadEvents();
+        executeCall();
     }
     @VisibleForTesting
     void onSwitchDateByPosition(int position) {
@@ -53,7 +54,8 @@ public class MainPresenter extends Presenter<MainView> {
         view.setDateToTitle(currentLocalDate.toString());
     }
 
-    void loadEvents() {
+    void onPullToRefresh() {
+        eventCacheController.setOnPullToRefresh(currentLocalDate.toString(),true);
         executeCall();
     }
 
@@ -102,6 +104,6 @@ public class MainPresenter extends Presenter<MainView> {
         currentPosition = Integer.MAX_VALUE / 2;
         view.setDateToTitle(currentLocalDate.toString());
         view.initializeViewComponents(currentPosition);
-        loadEvents();
+        executeCall();
     }
 }

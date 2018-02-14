@@ -14,9 +14,9 @@ public abstract class CacheController<T> {
 
     public abstract void cache(T t);
 
-    public abstract long getLastCacheTime(String date);
+    public abstract void setOnPullToRefresh(String date, boolean value);
 
-    public abstract void putLastCacheTime(String date, long timestamp);
+    public abstract boolean isOnPullToRefresh(String date);
 
     public abstract boolean canUseCache();
 }

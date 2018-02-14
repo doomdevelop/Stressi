@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 public class EventCacheController extends CacheController<CacheEvent> {
     final static long CACHE_MAX_AGE = 10*60*1000;//10min cache limit
+    private final static String PULL_KEY = "pull";
 
     @Inject
     public EventCacheController(SharedPreferences sharedPreferences){
@@ -40,13 +41,16 @@ public class EventCacheController extends CacheController<CacheEvent> {
     }
 
     @Override
-    public long getLastCacheTime(String date) {
-        return 0;
+    public void setOnPullToRefresh(String date, boolean value) {
+        sharedPreferences.edit().putBoolean(date+PULL_KEY,value).commit();
     }
 
     @Override
-    public void putLastCacheTime(String date, long timestamp) {
-
+    public boolean isOnPullToRefresh(String date) {
+        if(date == null){
+            return false;
+        }
+        return sharedPreferences.getBoolean(date+PULL_KEY,false);
     }
 
     @Override

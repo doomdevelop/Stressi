@@ -38,7 +38,8 @@ public class CacheInterceptor implements Interceptor {
             }
         }
 
-        if (cacheController.canUseCache() && date != null) {
+        boolean isOnPushToRefrash = cacheController.isOnPullToRefresh(date);
+        if (cacheController.canUseCache() && !isOnPushToRefrash && date != null) {
             CacheEvent cacheEvent = cacheController.getLastCache(date);
             if (cacheEvent != null) {
                 String responseString = cacheEvent.htmlResponse;
@@ -56,8 +57,10 @@ public class CacheInterceptor implements Interceptor {
         String htmlResponse = response.body().string();
         if (date != null) {
             cacheController.cache(new CacheEvent(htmlResponse, date, System.currentTimeMillis()));
+            if(isOnPushToRefrash) {
+                cacheController.setOnPullToRefresh(date, false);
+            }
         }
-
         return response.newBuilder()
                 .body(ResponseBody.create(response.body().contentType(), htmlResponse)).build();
     }

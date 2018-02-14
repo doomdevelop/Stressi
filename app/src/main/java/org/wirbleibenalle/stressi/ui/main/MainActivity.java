@@ -115,7 +115,7 @@ public class MainActivity extends BaseActivity implements MainView, EventItemVie
 
         @Override
         public void onPullToRefresh() {
-            presenter.loadEvents();
+            presenter.onPullToRefresh();
         }
     };
 
