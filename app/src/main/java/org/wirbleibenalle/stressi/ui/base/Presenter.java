@@ -29,28 +29,25 @@ public abstract class Presenter<T extends Presenter.View> {
     public void initialize(Bundle extras) {
     }
 
-    public void start() {
+    public void onStart() {
         isViewAlive.set(true);
     }
 
-    public void finalizeView() {
+    public void onStop() {
             isViewAlive.set(false);
     }
 
-//    public void onSettingsClick() {
-//        ((ActionBarView) view).openSettingsView();
-//    }
-//
-//    public void onHomeClick() {
-//        ((ActionBarView) view).openHomeView(null);
-//    }
+    protected void showError(String errorMessage){
+        view.showError(errorMessage);
+    }
 
-    protected void handleErrorCase(ResponseError error) {
-        boolean userLogged = error.getErrorCode() != ERROR_NOT_FOUND;
-        view.showError(error.getErrorMessage());
+    protected void showMessage(String message){
+        view.showMessage(message);
     }
 
     public interface View {
         void showError(String errorMessage);
+
+        void showMessage(String message);
     }
 }

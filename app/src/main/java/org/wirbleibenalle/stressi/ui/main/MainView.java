@@ -21,4 +21,6 @@ public interface MainView extends Presenter.View {
 
     void setDateToTitle(String title);
 
+    void showNoConnectionErrorMessage();
+
 }

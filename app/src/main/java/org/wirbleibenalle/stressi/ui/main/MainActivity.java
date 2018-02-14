@@ -107,6 +107,11 @@ public class MainActivity extends BaseActivity implements MainView, EventItemVie
         setTitle(title);
     }
 
+    @Override
+    public void showNoConnectionErrorMessage() {
+        super.showError(getString(R.string.no_connection));
+    }
+
     private CustomPagerAdapter.PageAdapterCallback pageAdapterCallback = new CustomPagerAdapter.PageAdapterCallback() {
         @Override
         public void onListItemclicked(int position) {

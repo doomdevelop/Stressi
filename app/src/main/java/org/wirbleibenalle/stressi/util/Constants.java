@@ -6,4 +6,5 @@ package org.wirbleibenalle.stressi.util;
 
 public interface Constants {
     String BASE_URL = "https://stressfaktor.squat.net/";
+    String NO_NETWORK_CONNECTION = "no_network_connection";
 }

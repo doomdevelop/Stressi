@@ -6,6 +6,8 @@ import android.util.Log;
 
 import org.joda.time.LocalDate;
 import org.wirbleibenalle.stressi.data.cache.EventCacheController;
+import org.wirbleibenalle.stressi.data.remote.ResponseError;
+import org.wirbleibenalle.stressi.data.remote.ResponseException;
 import org.wirbleibenalle.stressi.domain.observer.DefaultObserver;
 import org.wirbleibenalle.stressi.domain.usecase.GetEventsUseCase;
 import org.wirbleibenalle.stressi.ui.base.Presenter;
@@ -18,7 +20,6 @@ import javax.inject.Inject;
 /**
  * Created by and on 26.10.16.
  */
-
 public class MainPresenter extends Presenter<MainView> {
     private static final String TAG = MainPresenter.class.getSimpleName();
     private final GetEventsUseCase getEventsUseCase;
@@ -33,41 +34,42 @@ public class MainPresenter extends Presenter<MainView> {
         this.eventCacheController = eventCacheController;
     }
 
-    void onPageSelected(int position){
+    void onPageSelected(int position) {
         onSwitchDateByPosition(position);
         view.showPullToRefreshProgress(position);
         executeCall();
     }
+
     @VisibleForTesting
     void onSwitchDateByPosition(int position) {
-        Log.d(TAG,"position="+position+" currentPosition="+currentPosition);
-        if(position == currentPosition){
+        Log.d(TAG, "position=" + position + " currentPosition=" + currentPosition);
+        if (position == currentPosition) {
             return;
         }
         if (position > currentPosition) {
             currentLocalDate = currentLocalDate == null ? LocalDate.now().plusDays(position) :
-                currentLocalDate.plusDays(position-currentPosition) ;
+                    currentLocalDate.plusDays(position - currentPosition);
         } else {
-            currentLocalDate = currentLocalDate.minusDays(currentPosition-position);
+            currentLocalDate = currentLocalDate.minusDays(currentPosition - position);
         }
         currentPosition = position;
         view.setDateToTitle(currentLocalDate.toString());
     }
 
     void onPullToRefresh() {
-        eventCacheController.setOnPullToRefresh(currentLocalDate.toString(),true);
+        eventCacheController.setOnPullToRefresh(currentLocalDate.toString(), true);
         executeCall();
     }
 
     @VisibleForTesting
-    void executeCall(){
+    void executeCall() {
         getEventsUseCase.setLocalDate(currentLocalDate);
         getEventsUseCase.setPosition(currentPosition);
         getEventsUseCase.unsubscribe();
-        getEventsUseCase.execute(new LoadEventObserver(currentLocalDate,currentPosition));
+        getEventsUseCase.execute(new LoadEventObserver(currentLocalDate, currentPosition));
     }
 
-    public class LoadEventObserver extends DefaultObserver<List<EventItem>>{
+    public class LoadEventObserver extends DefaultObserver<List<EventItem>> {
         private final int position;
         private final LocalDate localDate;
 
@@ -84,9 +86,24 @@ public class MainPresenter extends Presenter<MainView> {
         @Override
         public void onError(Throwable e) {
             super.onError(e);
-            Log.d(TAG, e.getMessage());
+            if (e instanceof ResponseException) {
+                ResponseException responseException = (ResponseException) e;
+                switch (responseException.getResponseError().getErrorType()) {
+                    case ResponseError.ERROR_NETWORK_CONNECTION:
+                        view.showNoConnectionErrorMessage();
+                        break;
+                    case ResponseError.ERROR_UNDEFINED:
+                        if (responseException.getResponseError().getErrorCode() == 500) {
+                            //TODO :  server error
+                        } else if (responseException.getResponseError().getErrorCode() == 401) {
+                            //TODO:  resource we're trying to access is not available
+                        }
+                        break;
+                }
+            } else {
+                //TODO: generic error
+            }
             view.hidePullToRefreshProgress(position);
-            //TODO: implement error case
         }
 
         @Override
@@ -97,6 +114,7 @@ public class MainPresenter extends Presenter<MainView> {
             view.hidePullToRefreshProgress(position);
         }
     }
+
     @Override
     public void initialize(Bundle extras) {
         super.initialize(extras);

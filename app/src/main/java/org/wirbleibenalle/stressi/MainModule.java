@@ -2,12 +2,14 @@ package org.wirbleibenalle.stressi;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 
 import org.wirbleibenalle.stressi.data.cache.CacheController;
 import org.wirbleibenalle.stressi.data.cache.CacheInterceptor;
 import org.wirbleibenalle.stressi.data.cache.EventCacheController;
 import org.wirbleibenalle.stressi.data.model.CacheEvent;
 import org.wirbleibenalle.stressi.data.model.Events;
+import org.wirbleibenalle.stressi.data.remote.ErrorHandlerInterceptor;
 import org.wirbleibenalle.stressi.data.remote.ServiceGenerator;
 import org.wirbleibenalle.stressi.data.repository.LocalRepository;
 import org.wirbleibenalle.stressi.data.transformer.EventTransformer;
@@ -74,14 +76,24 @@ public class MainModule {
 
     @Provides
     @Singleton
+    public ConnectivityManager provideConnectivityManager(Context context){
+        ConnectivityManager connMgr = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return connMgr;
+
+    }
+
+    @Provides
+    @Singleton
     public Builder provideBuilder(){
         return new OkHttpClient.Builder();
     }
 
     @Provides
     @Singleton
-    public OkHttpClient provideOkHttpClient(Builder builder, CacheController<CacheEvent> cacheController){
+    public OkHttpClient provideOkHttpClient(Builder builder, CacheController<CacheEvent> cacheController, ConnectivityManager connectivityManager){
 //        addLoggingInterceptor(builder);
+        addErrorHandlerInterceptor(builder,connectivityManager);
         addCacheInterceptor(builder,cacheController);
         OkHttpClient client = builder.build();
         return client;
@@ -98,6 +110,12 @@ public class MainModule {
                 .build();
     }
 
+    @Provides
+    @Singleton
+    public ServiceGenerator provideServiceGenerator(Retrofit retrofit){
+        return new ServiceGenerator(retrofit);
+    }
+
     private void addLoggingInterceptor(final OkHttpClient.Builder builder) {
 
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
@@ -110,9 +128,11 @@ public class MainModule {
         builder.addInterceptor(cacheInterceptor);
     }
 
-    @Provides
-    @Singleton
-    public ServiceGenerator provideServiceGenerator(Retrofit retrofit){
-        return new ServiceGenerator(retrofit);
+    private void addErrorHandlerInterceptor(final OkHttpClient.Builder builder, ConnectivityManager connectivityManager){
+        builder.addInterceptor(createErrorHandlerInterceptor(connectivityManager));
+    }
+
+    private ErrorHandlerInterceptor createErrorHandlerInterceptor(ConnectivityManager connectivityManager){
+        return new ErrorHandlerInterceptor(connectivityManager);
     }
 }

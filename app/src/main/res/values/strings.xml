@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Stressfaktor</string>
+    <string name="no_connection">no network connection</string>
 </resources>

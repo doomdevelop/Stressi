@@ -5,16 +5,16 @@ package org.wirbleibenalle.stressi.data.remote;
  */
 
 public class ResponseError {
-    private String errorMessage;
+    private int errorType;
     private int errorCode;
 
-    public ResponseError(String errorMessage, int errorCode) {
-        this.errorMessage = errorMessage;
+    public ResponseError(int errorType, int errorCode) {
+        this.errorType = errorType;
         this.errorCode = errorCode;
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
+    public int getErrorType() {
+        return errorType;
     }
 
     public int getErrorCode() {
@@ -24,4 +24,5 @@ public class ResponseError {
     public static final int ERROR_UNDEFINED = -1;
     public static final int ERROR_TOKEN_EXPIRED = 1;
     public static final int ERROR_DATABASE = 2;
+    public static final int ERROR_NETWORK_CONNECTION = 3;
 }
