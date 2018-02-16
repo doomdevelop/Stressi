@@ -2,10 +2,6 @@ package org.wirbleibenalle.stressi.util;
 
 import org.wirbleibenalle.stressi.ui.model.EventItem;
 
-/**
- * Created by matahari on 16.02.18.
- */
-
 public class EventItemContentAnalyzer {
 
     public static String createShortDescription(EventItem eventItem){

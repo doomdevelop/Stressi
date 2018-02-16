@@ -9,6 +9,7 @@ import org.wirbleibenalle.stressi.data.cache.CacheInterceptor;
 import org.wirbleibenalle.stressi.data.cache.EventCacheController;
 import org.wirbleibenalle.stressi.data.model.CacheEvent;
 import org.wirbleibenalle.stressi.data.model.Events;
+import org.wirbleibenalle.stressi.data.remote.ErrorHandler;
 import org.wirbleibenalle.stressi.data.remote.ErrorHandlerInterceptor;
 import org.wirbleibenalle.stressi.data.remote.ServiceGenerator;
 import org.wirbleibenalle.stressi.data.repository.LocalRepository;
@@ -39,7 +40,7 @@ public class MainModule {
     private final Context context;
     private static final String SHARE_PREF_NAME = "stressfaktor_pref";
 
-    MainModule(Context context){
+    MainModule(Context context) {
         this.context = context;
     }
 
@@ -52,7 +53,7 @@ public class MainModule {
     @Provides
     @Singleton
     public SharedPreferences provideSharedPreferences(Context context) {
-        return context.getSharedPreferences(SHARE_PREF_NAME,0);
+        return context.getSharedPreferences(SHARE_PREF_NAME, 0);
     }
 
     @Provides
@@ -65,18 +66,18 @@ public class MainModule {
     @Singleton
     public Transformer<Events, List<EventItem>> provideTransformer() {
         Transformer<Events, List<EventItem>> transformer = new EventTransformer();
-        return  transformer;
+        return transformer;
     }
 
     @Provides
     @Singleton
-    public CacheController<CacheEvent> provideCacheController(SharedPreferences sharedPreferences){
+    public CacheController<CacheEvent> provideCacheController(SharedPreferences sharedPreferences) {
         return new EventCacheController(sharedPreferences);
     }
 
     @Provides
     @Singleton
-    public ConnectivityManager provideConnectivityManager(Context context){
+    public ConnectivityManager provideConnectivityManager(Context context) {
         ConnectivityManager connMgr = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return connMgr;
@@ -85,23 +86,23 @@ public class MainModule {
 
     @Provides
     @Singleton
-    public Builder provideBuilder(){
+    public Builder provideBuilder() {
         return new OkHttpClient.Builder();
     }
 
     @Provides
     @Singleton
-    public OkHttpClient provideOkHttpClient(Builder builder, CacheController<CacheEvent> cacheController, ConnectivityManager connectivityManager){
+    public OkHttpClient provideOkHttpClient(Builder builder, CacheController<CacheEvent> cacheController, ErrorHandlerInterceptor errorHandlerInterceptor) {
 //        addLoggingInterceptor(builder);
-        addErrorHandlerInterceptor(builder,connectivityManager);
-        addCacheInterceptor(builder,cacheController);
+        builder.addInterceptor(errorHandlerInterceptor);
+        addCacheInterceptor(builder, cacheController);
         OkHttpClient client = builder.build();
         return client;
     }
 
     @Provides
     @Singleton
-    public Retrofit provideRetrofit(Context context, OkHttpClient okHttpClient){
+    public Retrofit provideRetrofit(Context context, OkHttpClient okHttpClient) {
         return new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .client(okHttpClient)
@@ -112,8 +113,20 @@ public class MainModule {
 
     @Provides
     @Singleton
-    public ServiceGenerator provideServiceGenerator(Retrofit retrofit){
+    public ServiceGenerator provideServiceGenerator(Retrofit retrofit) {
         return new ServiceGenerator(retrofit);
+    }
+
+    @Provides
+    @Singleton
+    public ErrorHandlerInterceptor provideErrorHandlerInterceptor(ConnectivityManager connectivityManager) {
+        return new ErrorHandlerInterceptor(connectivityManager);
+    }
+
+    @Provides
+    @Singleton
+    public ErrorHandler provideErrorHandler(ErrorHandlerInterceptor errorHandlerInterceptor) {
+        return new ErrorHandler(errorHandlerInterceptor);
     }
 
     private void addLoggingInterceptor(final OkHttpClient.Builder builder) {
@@ -123,16 +136,8 @@ public class MainModule {
         builder.addInterceptor(httpLoggingInterceptor);
     }
 
-    private void addCacheInterceptor(final OkHttpClient.Builder builder,CacheController cacheController){
+    private void addCacheInterceptor(final OkHttpClient.Builder builder, CacheController cacheController) {
         CacheInterceptor cacheInterceptor = new CacheInterceptor(cacheController);
         builder.addInterceptor(cacheInterceptor);
-    }
-
-    private void addErrorHandlerInterceptor(final OkHttpClient.Builder builder, ConnectivityManager connectivityManager){
-        builder.addInterceptor(createErrorHandlerInterceptor(connectivityManager));
-    }
-
-    private ErrorHandlerInterceptor createErrorHandlerInterceptor(ConnectivityManager connectivityManager){
-        return new ErrorHandlerInterceptor(connectivityManager);
     }
 }

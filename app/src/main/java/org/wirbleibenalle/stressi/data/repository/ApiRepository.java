@@ -33,7 +33,9 @@ public class ApiRepository {
     }
 
     public Observable<List<EventItem>> getEvents(LocalDate localDate) {
-        ((EventTransformer)transformer).setLocalDate(localDate);
+        if(transformer instanceof EventTransformer) {
+            ((EventTransformer) transformer).setLocalDate(localDate);
+        }
         return eventService.getEvents(localDate.toString()).map(generateTransformFunction());
     }
 

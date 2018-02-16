@@ -4,6 +4,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -13,10 +15,19 @@ import okhttp3.Response;
 
 public class ErrorHandlerInterceptor implements Interceptor {
     private final ConnectivityManager connectivityManager;
+    private List<ResponseErrorListener> responseErrorListenerList = new ArrayList<>();
 
     @Inject
     public ErrorHandlerInterceptor(ConnectivityManager connectivityManager) {
         this.connectivityManager = connectivityManager;
+    }
+
+    public void addResponseErrorListener(ResponseErrorListener responseErrorListener) {
+        responseErrorListenerList.add(responseErrorListener);
+    }
+
+    public void removeResponseErrorListener(ResponseErrorListener responseErrorListener) {
+        responseErrorListenerList.remove(responseErrorListener);
     }
 
     @Override
@@ -28,14 +39,19 @@ public class ErrorHandlerInterceptor implements Interceptor {
         boolean isMobileConn = networkInfo != null ? networkInfo.isConnected() : false;
 
         int errorType = ResponseError.ERROR_UNDEFINED;
-        if(!isWiFiConnected && !isMobileConn){
+        if (!isWiFiConnected && !isMobileConn) {
             errorType = ResponseError.ERROR_NETWORK_CONNECTION;
-            throw new ResponseException(new ResponseError(errorType,-1));
+            provideErrorToListeners(new ResponseError(errorType, -1));
         }
         okhttp3.Response response = chain.proceed(request);
-        if(response.code() == 200){
-            return response;
+
+        provideErrorToListeners(new ResponseError(errorType, response.code()));
+        return response;
+    }
+
+    private void provideErrorToListeners(ResponseError responseError) {
+        for (ResponseErrorListener responseErrorListener : responseErrorListenerList) {
+            responseErrorListener.onResponseError(responseError);
         }
-        throw new ResponseException(new ResponseError(errorType,response.code()));
     }
 }

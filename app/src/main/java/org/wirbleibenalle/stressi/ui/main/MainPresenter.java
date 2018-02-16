@@ -5,12 +5,12 @@ import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import org.wirbleibenalle.stressi.data.cache.EventCacheController;
+import org.wirbleibenalle.stressi.data.remote.ErrorHandler;
 import org.wirbleibenalle.stressi.data.remote.ResponseError;
-import org.wirbleibenalle.stressi.data.remote.ResponseException;
+import org.wirbleibenalle.stressi.data.remote.ResponseErrorListener;
 import org.wirbleibenalle.stressi.domain.observer.DefaultObserver;
 import org.wirbleibenalle.stressi.domain.usecase.GetEventsUseCase;
 import org.wirbleibenalle.stressi.ui.base.Presenter;
@@ -28,18 +28,20 @@ import static org.wirbleibenalle.stressi.util.EventItemContentAnalyzer.createSho
 /**
  * Created by and on 26.10.16.
  */
-public class MainPresenter extends Presenter<MainView> {
+public class MainPresenter extends Presenter<MainView> implements ResponseErrorListener {
     private static final String TAG = MainPresenter.class.getSimpleName();
     private final GetEventsUseCase getEventsUseCase;
     private final EventCacheController eventCacheController;
+    private final ErrorHandler errorHandler;
     private LocalDate currentLocalDate;
     private int currentPosition;
 
 
     @Inject
-    public MainPresenter(GetEventsUseCase getEventsUseCase, EventCacheController eventCacheController) {
+    public MainPresenter(GetEventsUseCase getEventsUseCase, EventCacheController eventCacheController, ErrorHandler errorHandler) {
         this.getEventsUseCase = getEventsUseCase;
         this.eventCacheController = eventCacheController;
+        this.errorHandler = errorHandler;
     }
 
     @Override
@@ -57,11 +59,13 @@ public class MainPresenter extends Presenter<MainView> {
     @Override
     public void onStart() {
         super.onStart();
+        errorHandler.addResponseErrorListener(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        errorHandler.removeResponseErrorListener(this);
     }
 
     void onDestroy() {
@@ -151,6 +155,24 @@ public class MainPresenter extends Presenter<MainView> {
         }
     }
 
+
+
+    @Override
+    public void onResponseError(ResponseError responseError) {
+        switch (responseError.getErrorType()) {
+            case ResponseError.ERROR_NETWORK_CONNECTION:
+                view.showNoConnectionErrorMessage();
+                break;
+            case ResponseError.ERROR_UNDEFINED:
+                if (responseError.getErrorCode() == 500) {
+                    //TODO :  server error
+                } else if (responseError.getErrorCode() == 401) {
+                    //TODO:  resource we're trying to access is not available
+                }
+                break;
+        }
+    }
+
     public class LoadEventObserver extends DefaultObserver<List<EventItem>> {
         private final int position;
         private final LocalDate localDate;
@@ -170,23 +192,6 @@ public class MainPresenter extends Presenter<MainView> {
             super.onError(e);
             if (view == null) {
                 return;
-            }
-            if (e instanceof ResponseException) {
-                ResponseException responseException = (ResponseException) e;
-                switch (responseException.getResponseError().getErrorType()) {
-                    case ResponseError.ERROR_NETWORK_CONNECTION:
-                        view.showNoConnectionErrorMessage();
-                        break;
-                    case ResponseError.ERROR_UNDEFINED:
-                        if (responseException.getResponseError().getErrorCode() == 500) {
-                            //TODO :  server error
-                        } else if (responseException.getResponseError().getErrorCode() == 401) {
-                            //TODO:  resource we're trying to access is not available
-                        }
-                        break;
-                }
-            } else {
-                //TODO: generic error
             }
             view.hidePullToRefreshProgress(position);
         }

@@ -57,7 +57,7 @@ public class MainPresenterTest {
         when(appContext.getResources()).thenReturn(resources);
         when(context.getApplicationContext()).thenReturn(appContext);
         JodaTimeAndroid.init(context);
-        mainPresenter = new MainPresenter(mockGetEventsUseCase, eventCacheController);
+        mainPresenter = new MainPresenter(mockGetEventsUseCase, eventCacheController, errorHandler);
         mainPresenter.setView(mainView);
     }
 }
