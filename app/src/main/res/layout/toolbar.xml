@@ -30,7 +30,7 @@
                 android:layout_centerVertical="true"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="TITLE"
+                android:textStyle="bold"
                 android:textColor="@android:color/black"/>
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>

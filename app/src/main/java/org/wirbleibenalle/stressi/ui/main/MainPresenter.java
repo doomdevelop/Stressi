@@ -7,6 +7,8 @@ import android.util.Log;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.wirbleibenalle.stressi.data.cache.EventCacheController;
 import org.wirbleibenalle.stressi.data.remote.ErrorHandler;
 import org.wirbleibenalle.stressi.data.remote.ResponseError;
@@ -18,6 +20,7 @@ import org.wirbleibenalle.stressi.ui.model.EventItem;
 import org.wirbleibenalle.stressi.util.EventItemContentAnalyzer;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -50,10 +53,15 @@ public class MainPresenter extends Presenter<MainView> implements ResponseErrorL
         currentLocalDate = LocalDate.now();
         currentPosition = Integer.MAX_VALUE / 2;
         if (view != null) {
-            view.setDateToTitle(currentLocalDate.toString());
+            view.setDateToTitle(formatDateForTitle());
             view.initializeViewComponents(currentPosition);
         }
         executeCall();
+    }
+
+    private String formatDateForTitle(){
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("EE d MMMM y").withLocale(Locale.GERMANY);
+        return currentLocalDate.toString(formatter);
     }
 
     @Override
@@ -94,7 +102,7 @@ public class MainPresenter extends Presenter<MainView> implements ResponseErrorL
         }
         currentPosition = position;
         if (view != null) {
-            view.setDateToTitle(currentLocalDate.toString());
+            view.setDateToTitle(formatDateForTitle());
         }
     }
 
