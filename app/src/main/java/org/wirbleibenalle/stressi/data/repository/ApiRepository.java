@@ -4,6 +4,7 @@ import org.joda.time.LocalDate;
 import org.wirbleibenalle.stressi.data.model.Events;
 import org.wirbleibenalle.stressi.data.remote.ServiceGenerator;
 import org.wirbleibenalle.stressi.data.remote.service.EventService;
+import org.wirbleibenalle.stressi.data.transformer.EventTransformer;
 import org.wirbleibenalle.stressi.data.transformer.Transformer;
 import org.wirbleibenalle.stressi.ui.model.EventItem;
 
@@ -32,6 +33,7 @@ public class ApiRepository {
     }
 
     public Observable<List<EventItem>> getEvents(LocalDate localDate) {
+        ((EventTransformer)transformer).setLocalDate(localDate);
         return eventService.getEvents(localDate.toString()).map(generateTransformFunction());
     }
 

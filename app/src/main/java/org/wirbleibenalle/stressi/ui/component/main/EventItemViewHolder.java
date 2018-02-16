@@ -5,7 +5,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.wirbleibenalle.stressi.data.model.Event;
 import org.wirbleibenalle.stressi.stressfaktor.R;
 import org.wirbleibenalle.stressi.ui.model.EventItem;
 
@@ -30,6 +29,10 @@ public class EventItemViewHolder extends RecyclerView.ViewHolder {
     TextView tvDescription;
     @Bind(R.id.event_share)
     ImageView ivShare;
+    @Bind(R.id.event_show_map)
+    ImageView ivShowMap;
+    @Bind(R.id.event_calendar)
+    ImageView ivCalendar;
 
     private final EventItemViewHolderListener eventItemViewHolderListener;
 
@@ -46,13 +49,17 @@ public class EventItemViewHolder extends RecyclerView.ViewHolder {
         tvPlace.setText(eventItem.getPlace());
         tvAddress.setText(eventItem.getAddress());
 
-        ivShare.setOnClickListener(v -> eventItemViewHolderListener.onShareClicked(eventItem));
+        ivShare.setOnClickListener(v -> eventItemViewHolderListener.onShareEventClicked(eventItem));
+        ivShowMap.setOnClickListener(v-> eventItemViewHolderListener.onShowEventOnMapClicked(eventItem));
+        ivCalendar.setOnClickListener(v->eventItemViewHolderListener.onAddEventToCalendarClicked(eventItem));
         itemView.setOnClickListener(v -> onRowClickListener.onItemSelected(position));
     }
 
     public interface EventItemViewHolderListener {
-        void onShareClicked(EventItem eventItem );
+        void onShareEventClicked(EventItem eventItem );
 
-        void showOnGoogleMap(EventItem eventItem );
+        void onShowEventOnMapClicked(EventItem eventItem );
+
+        void onAddEventToCalendarClicked(EventItem eventItem);
     }
 }

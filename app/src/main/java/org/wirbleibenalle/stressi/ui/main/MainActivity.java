@@ -1,10 +1,13 @@
 package org.wirbleibenalle.stressi.ui.main;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.wirbleibenalle.stressi.StressiApplication;
 import org.wirbleibenalle.stressi.stressfaktor.R;
@@ -42,6 +45,11 @@ public class MainActivity extends BaseActivity implements MainView, EventItemVie
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
     }
@@ -52,8 +60,9 @@ public class MainActivity extends BaseActivity implements MainView, EventItemVie
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.onDestroy();
     }
 
     @Override
@@ -112,6 +121,43 @@ public class MainActivity extends BaseActivity implements MainView, EventItemVie
         super.showError(getString(R.string.no_connection));
     }
 
+    @Override
+    public void addEventToCalendar(EventItem eventItem, DateTime datetime, String shortTitle) {
+        Intent intent = new Intent(Intent.ACTION_EDIT);
+        intent.setType("vnd.android.cursor.item/event");
+        intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, datetime.getMillis());
+        intent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, false);
+        intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, datetime.getMillis()+60*60*1000);
+        intent.putExtra(CalendarContract.Events.TITLE, shortTitle);
+        intent.putExtra(CalendarContract.Events.DESCRIPTION, eventItem.getDescription());
+        intent.putExtra(CalendarContract.Events.EVENT_LOCATION, eventItem.getAddress());
+        intent.putExtra(CalendarContract.Events.ACCESS_LEVEL, CalendarContract.Events.ACCESS_PRIVATE);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    public void showEventOnMap(String address) {
+        Uri gmmIntentUri = Uri.parse(address);
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        if (mapIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(mapIntent);
+        }
+    }
+
+    @Override
+    public void shareEvent(String subject, String text) {
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, text);
+        if (sharingIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(Intent.createChooser(sharingIntent, "Share via"));
+        }
+    }
+
     private CustomPagerAdapter.PageAdapterCallback pageAdapterCallback = new CustomPagerAdapter.PageAdapterCallback() {
         @Override
         public void onListItemclicked(int position) {
@@ -125,17 +171,17 @@ public class MainActivity extends BaseActivity implements MainView, EventItemVie
     };
 
     @Override
-    public void onShareClicked(EventItem eventItem) {
-        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-        sharingIntent.setType("text/plain");
-        String shareBody = eventItem.getTime() + " | " + eventItem.getPlace() + " | " + eventItem.getAddress();
-        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, shareBody);
-        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody + "\n" + eventItem.getDescription());
-        startActivity(Intent.createChooser(sharingIntent, "Share via"));
+    public void onShareEventClicked(EventItem eventItem) {
+     presenter.onShareEvent(eventItem);
     }
 
     @Override
-    public void showOnGoogleMap(EventItem eventItem) {
+    public void onShowEventOnMapClicked(EventItem eventItem) {
+        presenter.onShowEventOnMap(eventItem);
+    }
 
+    @Override
+    public void onAddEventToCalendarClicked(EventItem eventItem) {
+      presenter.onAddEventToCalendar(eventItem);
     }
 }

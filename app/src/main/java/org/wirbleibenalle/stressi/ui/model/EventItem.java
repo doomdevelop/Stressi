@@ -1,5 +1,8 @@
 package org.wirbleibenalle.stressi.ui.model;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import org.joda.time.LocalDate;
 
 /**
@@ -11,12 +14,14 @@ public class EventItem {
     private final String address;
     private final String place;
     private final String description;
+    private final LocalDate localDate;
 
-    public EventItem(String time,  String address, String place, String description) {
+    public EventItem(@NonNull String time,@NonNull String address,@NonNull String place,@NonNull String description, @Nullable LocalDate localDate) {
         this.time = time;
         this.address = address;
         this.place = place;
         this.description = description;
+        this.localDate = localDate;
     }
 
     public String getTime() {
@@ -43,5 +48,9 @@ public class EventItem {
             ", place='" + place + '\'' +
             ", description='" + description + '\'' +
                 '}';
+    }
+
+    public LocalDate getLocalDate() {
+        return localDate;
     }
 }

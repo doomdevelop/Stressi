@@ -1,6 +1,6 @@
 package org.wirbleibenalle.stressi.ui.main;
 
-import org.wirbleibenalle.stressi.data.model.Events;
+import org.joda.time.DateTime;
 import org.wirbleibenalle.stressi.ui.base.Presenter;
 import org.wirbleibenalle.stressi.ui.model.EventItem;
 
@@ -23,4 +23,9 @@ public interface MainView extends Presenter.View {
 
     void showNoConnectionErrorMessage();
 
+    void addEventToCalendar(EventItem eventItem, DateTime datetime, String shortTitle);
+
+    void showEventOnMap(String address);
+
+    void shareEvent(String Subject, String text);
 }
