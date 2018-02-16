@@ -159,6 +159,9 @@ public class MainPresenter extends Presenter<MainView> implements ResponseErrorL
 
     @Override
     public void onResponseError(ResponseError responseError) {
+        if(view == null){
+            return;
+        }
         switch (responseError.getErrorType()) {
             case ResponseError.ERROR_NETWORK_CONNECTION:
                 view.showNoConnectionErrorMessage();
