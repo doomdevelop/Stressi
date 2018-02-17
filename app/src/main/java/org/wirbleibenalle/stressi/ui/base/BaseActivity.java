@@ -8,10 +8,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import org.wirbleibenalle.stressi.stressfaktor.R;
+import org.wirbleibenalle.stressi.ui.animation.BounceInterpolator;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -76,6 +78,13 @@ public abstract class BaseActivity extends AppCompatActivity implements Presente
         tvTitle.setText(title);
     }
 
+    public void animateTitle() {
+        final Animation myAnim = AnimationUtils.loadAnimation(this, R.anim.bounce);
+        BounceInterpolator interpolator = new BounceInterpolator(0.2, 20);
+        myAnim.setInterpolator(interpolator);
+
+        tvTitle.startAnimation(myAnim);
+    }
 
     @Override
     protected void onStart() {

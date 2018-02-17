@@ -39,7 +39,6 @@ public class MainPresenter extends Presenter<MainView> implements ResponseErrorL
     private LocalDate currentLocalDate;
     private int currentPosition;
 
-
     @Inject
     public MainPresenter(GetEventsUseCase getEventsUseCase, EventCacheController eventCacheController, ErrorHandler errorHandler) {
         this.getEventsUseCase = getEventsUseCase;
@@ -59,7 +58,7 @@ public class MainPresenter extends Presenter<MainView> implements ResponseErrorL
         executeCall();
     }
 
-    private String formatDateForTitle(){
+    private String formatDateForTitle() {
         DateTimeFormatter formatter = DateTimeFormat.forPattern("EE d MMMM y").withLocale(Locale.GERMANY);
         return currentLocalDate.toString(formatter);
     }
@@ -164,10 +163,9 @@ public class MainPresenter extends Presenter<MainView> implements ResponseErrorL
     }
 
 
-
     @Override
     public void onResponseError(ResponseError responseError) {
-        if(view == null){
+        if (view == null) {
             return;
         }
         switch (responseError.getErrorType()) {

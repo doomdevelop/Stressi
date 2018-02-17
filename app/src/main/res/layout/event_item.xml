@@ -30,7 +30,6 @@
             android:layout_toRightOf="@+id/event_time"
             android:textStyle="bold"
             tools:text="dfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdwef" />
-/>
     </RelativeLayout>
 
     <TextView

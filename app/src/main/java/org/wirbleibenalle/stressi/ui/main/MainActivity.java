@@ -76,15 +76,17 @@ public class MainActivity extends BaseActivity implements MainView, EventItemVie
         viewPager.setAdapter(customPagerAdapter);
         viewPager.setCurrentItem(position);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 //positionOffset by page change from 0.0-1.0
-                Log.d(TAG, "onPageScrolled() position " + position + " positionOffset: " + positionOffset + " positionOffsetPixels " + positionOffsetPixels);
+                Log.i(TAG, "onPageScrolled() position " + position + " positionOffset: " + positionOffset + " positionOffsetPixels " + positionOffsetPixels);
             }
 
             @Override
             public void onPageSelected(int position) {
-                Log.d(TAG, "onPageSelected() " + position);
+                Log.i(TAG, "onPageSelected() " + position);
+                animateTitle();
                 presenter.onPageSelected(position);
             }
 
@@ -127,7 +129,7 @@ public class MainActivity extends BaseActivity implements MainView, EventItemVie
         intent.setType("vnd.android.cursor.item/event");
         intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, datetime.getMillis());
         intent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, false);
-        intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, datetime.getMillis()+60*60*1000);
+        intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, datetime.getMillis() + 60 * 60 * 1000);
         intent.putExtra(CalendarContract.Events.TITLE, shortTitle);
         intent.putExtra(CalendarContract.Events.DESCRIPTION, eventItem.getDescription());
         intent.putExtra(CalendarContract.Events.EVENT_LOCATION, eventItem.getAddress());
@@ -172,7 +174,7 @@ public class MainActivity extends BaseActivity implements MainView, EventItemVie
 
     @Override
     public void onShareEventClicked(EventItem eventItem) {
-     presenter.onShareEvent(eventItem);
+        presenter.onShareEvent(eventItem);
     }
 
     @Override
@@ -182,6 +184,6 @@ public class MainActivity extends BaseActivity implements MainView, EventItemVie
 
     @Override
     public void onAddEventToCalendarClicked(EventItem eventItem) {
-      presenter.onAddEventToCalendar(eventItem);
+        presenter.onAddEventToCalendar(eventItem);
     }
 }
