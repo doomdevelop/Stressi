@@ -1,9 +1,14 @@
 package org.wirbleibenalle.stressi.data.cache;
 
+import android.support.annotation.VisibleForTesting;
+
 import org.joda.time.LocalDate;
 import org.wirbleibenalle.stressi.data.model.CacheEvent;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import javax.inject.Inject;
 
@@ -26,7 +31,9 @@ public class CacheInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Response response;
         Request request = chain.request();
-
+        if(request.url() == null){
+            return chain.proceed(request);
+        }
         final String url = request.url().toString();
         String[] splitUrl = null;
         String date = null;
@@ -35,6 +42,8 @@ public class CacheInterceptor implements Interceptor {
             splitUrl = url.split("=");
             if (isDateValid(splitUrl)) {
                 date = splitUrl[1];
+            }else {
+                return chain.proceed(request);
             }
         }
 
@@ -74,8 +83,16 @@ public class CacheInterceptor implements Interceptor {
         return localDate;
     }
 
-    private boolean isDateValid(String[] splitedUrl) {
+    @VisibleForTesting
+    boolean isDateValid(String[] splitedUrl) {
         if (splitedUrl.length == 2 && splitedUrl[1] != null && splitedUrl[1].length() > 0) {
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            format.setLenient(false);
+            try {
+                format.parse(splitedUrl[1]);
+            } catch (ParseException e) {
+                return false;
+            }
             return true;
         }
         return false;

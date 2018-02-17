@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.wirbleibenalle.stressi.StressiApplication;
 import org.wirbleibenalle.stressi.stressfaktor.R;
+import org.wirbleibenalle.stressi.ui.animation.ZoomOutPageTransformer;
 import org.wirbleibenalle.stressi.ui.base.BaseActivity;
 import org.wirbleibenalle.stressi.ui.component.main.EventItemViewHolder;
 import org.wirbleibenalle.stressi.ui.component.pageView.CustomPagerAdapter;
@@ -20,13 +21,13 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 
 public class MainActivity extends BaseActivity implements MainView, EventItemViewHolder.EventItemViewHolderListener {
 
     @Inject
     MainPresenter presenter;
-    @Bind(R.id.viewpager)
+    @BindView(R.id.viewpager)
     ViewPager viewPager;
     private static final String TAG = CustomPagerAdapter.class.getSimpleName();
 

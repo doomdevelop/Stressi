@@ -8,7 +8,7 @@ import android.widget.TextView;
 import org.wirbleibenalle.stressi.stressfaktor.R;
 import org.wirbleibenalle.stressi.ui.model.EventItem;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -19,19 +19,19 @@ public class EventItemViewHolder extends RecyclerView.ViewHolder {
 
     private RecyclerItemListener onRowClickListener;
 
-    @Bind(R.id.event_time)
+    @BindView(R.id.event_time)
     TextView tvTime;
-    @Bind(R.id.event_address)
+    @BindView(R.id.event_address)
     TextView tvAddress;
-    @Bind(R.id.event_place)
+    @BindView(R.id.event_place)
     TextView tvPlace;
-    @Bind(R.id.event_description)
+    @BindView(R.id.event_description)
     TextView tvDescription;
-    @Bind(R.id.event_share)
+    @BindView(R.id.event_share)
     ImageView ivShare;
-    @Bind(R.id.event_show_map)
+    @BindView(R.id.event_show_map)
     ImageView ivShowMap;
-    @Bind(R.id.event_calendar)
+    @BindView(R.id.event_calendar)
     ImageView ivCalendar;
 
     private final EventItemViewHolderListener eventItemViewHolderListener;

@@ -12,6 +12,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.wirbleibenalle.stressi.data.cache.EventCacheController;
+import org.wirbleibenalle.stressi.data.remote.ErrorHandler;
 import org.wirbleibenalle.stressi.data.repository.DataRepository;
 import org.wirbleibenalle.stressi.domain.usecase.GetEventsUseCase;
 import org.wirbleibenalle.stressi.ui.model.EventItem;
@@ -31,21 +32,23 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class MainPresenterTest {
     @Mock
-    private DataRepository dataRepository;
+    DataRepository dataRepository;
     @Mock
-    private MainView mainView;
+    MainView mainView;
 
     @Mock
-    private MainPresenter.LoadEventObserver loadEventObserver;
+    MainPresenter.LoadEventObserver loadEventObserver;
 
     @Captor
-    private ArgumentCaptor<List<EventItem>> observerArgument;
+    ArgumentCaptor<List<EventItem>> observerArgument;
 
     @Mock
-    private GetEventsUseCase mockGetEventsUseCase;
+    GetEventsUseCase mockGetEventsUseCase;
     @Mock
-    private EventCacheController eventCacheController;
-    private MainPresenter mainPresenter;
+    EventCacheController eventCacheController;
+    @Mock
+    ErrorHandler errorHandler;
+    MainPresenter mainPresenter;
 
 
     @Before

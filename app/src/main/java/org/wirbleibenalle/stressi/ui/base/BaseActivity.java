@@ -15,7 +15,7 @@ import android.widget.TextView;
 import org.wirbleibenalle.stressi.stressfaktor.R;
 import org.wirbleibenalle.stressi.ui.animation.BounceInterpolator;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -23,11 +23,11 @@ import butterknife.ButterKnife;
  */
 
 public abstract class BaseActivity extends AppCompatActivity implements Presenter.View {
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     protected Toolbar toolbar;
-    @Bind(R.id.txt_toolbar_title)
+    @BindView(R.id.txt_toolbar_title)
     protected TextView tvTitle;
-    @Bind(R.id.coordinatorLayout)
+    @BindView(R.id.coordinatorLayout)
     protected CoordinatorLayout coordinatorLayout;
 
     protected Presenter presenter;

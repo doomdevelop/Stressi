@@ -1,8 +1,5 @@
 package org.wirbleibenalle.stressi.ui.animation;
 
-/**
- * Created by matahari on 16.02.18.
- */
 
 public class BounceInterpolator implements android.view.animation.Interpolator {
     private double mAmplitude = 1;
