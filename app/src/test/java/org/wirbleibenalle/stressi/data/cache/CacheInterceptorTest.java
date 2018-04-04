@@ -44,7 +44,6 @@ public class CacheInterceptorTest {
     CacheEvent cacheEvent;
 
     okhttp3.HttpUrl url = PowerMockito.mock(okhttp3.HttpUrl.class);
-
     Request request = PowerMockito.mock(Request.class);
     Interceptor.Chain chain = PowerMockito.mock(Interceptor.Chain.class);
     Response response = PowerMockito.mock(Response.class);
@@ -77,6 +76,7 @@ public class CacheInterceptorTest {
 
         verify(cacheController, never()).getLastCache(any(String.class));
         verify(cacheController, never()).cache(Matchers.<CacheEvent>any());
+        verify(cacheController,never()).setOnPullToRefresh(SPLIT_CORRECT_URL[1],false);
         assertEquals(response, responseReturn);
     }
 
