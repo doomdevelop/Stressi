@@ -5,15 +5,17 @@ import org.wirbleibenalle.stressi.data.repository.DataRepository;
 
 import javax.inject.Inject;
 
-import rx.Observable;
+import io.reactivex.Observable;
+
 
 /**
  * Created by and on 26.10.16.
  */
 public class GetEventsUseCase extends UseCase {
     private DataRepository dataRepository;
-    private  LocalDate localDate;
+    private LocalDate localDate;
     private Integer position;
+
 
     @Inject
     public GetEventsUseCase(DataRepository dataRepository) {
@@ -23,6 +25,14 @@ public class GetEventsUseCase extends UseCase {
     @Override
     protected Observable buildUseCaseObservable() {
         return dataRepository.getEvents(localDate, position);
+    }
+
+    @Override
+    public void dispose() {
+    }
+
+    @Override
+    public void unsubscribe() {
     }
 
     public void setPosition(int position) {

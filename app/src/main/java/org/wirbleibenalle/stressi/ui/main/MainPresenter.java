@@ -13,7 +13,6 @@ import org.wirbleibenalle.stressi.data.cache.EventCacheController;
 import org.wirbleibenalle.stressi.data.remote.ErrorHandler;
 import org.wirbleibenalle.stressi.data.remote.ResponseError;
 import org.wirbleibenalle.stressi.data.remote.ResponseErrorListener;
-import org.wirbleibenalle.stressi.domain.observer.DefaultObserver;
 import org.wirbleibenalle.stressi.domain.usecase.GetEventsUseCase;
 import org.wirbleibenalle.stressi.ui.base.Presenter;
 import org.wirbleibenalle.stressi.ui.model.EventItem;
@@ -23,6 +22,10 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
+
+import io.reactivex.Observer;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 import static org.wirbleibenalle.stressi.util.Constants.GMM_INTENT_URI_LAT_LON;
 import static org.wirbleibenalle.stressi.util.Constants.GMM_INTENT_URI_BERLIN;
@@ -38,12 +41,14 @@ public class MainPresenter extends Presenter<MainView> implements ResponseErrorL
     private final ErrorHandler errorHandler;
     private LocalDate currentLocalDate;
     private int currentPosition;
+    private final CompositeDisposable compositeDisposable;
 
     @Inject
     public MainPresenter(GetEventsUseCase getEventsUseCase, EventCacheController eventCacheController, ErrorHandler errorHandler) {
         this.getEventsUseCase = getEventsUseCase;
         this.eventCacheController = eventCacheController;
         this.errorHandler = errorHandler;
+        this.compositeDisposable = new CompositeDisposable();
     }
 
     @Override
@@ -114,8 +119,8 @@ public class MainPresenter extends Presenter<MainView> implements ResponseErrorL
     void executeCall() {
         getEventsUseCase.setLocalDate(currentLocalDate);
         getEventsUseCase.setPosition(currentPosition);
-        getEventsUseCase.unsubscribe();
-        getEventsUseCase.execute(new LoadEventObserver(currentLocalDate, currentPosition));
+        getEventsUseCase.dispose();
+        getEventsUseCase.execute(new LoadEventObserver(currentPosition ));
     }
 
     void onAddEventToCalendar(EventItem eventItem) {
@@ -182,23 +187,19 @@ public class MainPresenter extends Presenter<MainView> implements ResponseErrorL
         }
     }
 
-    public class LoadEventObserver extends DefaultObserver<List<EventItem>> {
+    public class LoadEventObserver implements Observer<List<EventItem>> {
         private final int position;
-        private final LocalDate localDate;
 
-        public LoadEventObserver(LocalDate localDate, int position) {
+        public LoadEventObserver( int position) {
             this.position = position;
-            this.localDate = localDate;
         }
 
         @Override
-        public void onCompleted() {
-            super.onCompleted();
+        public void onComplete() {
         }
 
         @Override
         public void onError(Throwable e) {
-            super.onError(e);
             if (view == null) {
                 return;
             }
@@ -206,8 +207,12 @@ public class MainPresenter extends Presenter<MainView> implements ResponseErrorL
         }
 
         @Override
+        public void onSubscribe(Disposable d) {
+            compositeDisposable.add(d);
+        }
+
+        @Override
         public void onNext(List<EventItem> events) {
-            super.onNext(events);
             Log.d(TAG, "onNext : position" + position);
             if (view == null) {
                 return;

@@ -7,20 +7,18 @@ buildscript {
 
     dependencies {
         // Gradle
-        classpath 'com.android.tools.build:gradle:3.1.0'
-
-//        classpath 'io.fabric.tools:gradle:1.+'
+        classpath 'com.android.tools.build:gradle:3.1.1'
     }
 }
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion '27.0.3'
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
     defaultConfig {
         applicationId "stressi.wirbleibenalle.org.stressfaktor"
-        minSdkVersion 15
-        targetSdkVersion 26
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -29,8 +27,8 @@ android {
         release {
             storeFile file('HelloConfig.keystore')
             keyAlias 'HelloConfig'
-            storePassword 'laser.yams.heady.testy'
-            keyPassword 'fw.stabs.steady.wool'
+            storePassword 'test'
+            keyPassword 'test'
         }
     }
     buildTypes {
@@ -55,27 +53,30 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'net.danlew:android.joda:2.9.4.3'
-    implementation 'com.android.support:support-v4:24.2.1'
-    implementation 'com.android.support:design:24.2.1'
-    implementation 'com.android.support:support-v4:24.2.1'
-    implementation 'com.google.code.gson:gson:2.8.2'
-//    compile 'com.github.lsjwzh.RecyclerViewPager:lib:v1.0.0'
+    implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    implementation "com.android.support:design:$rootProject.supportLibraryVersion"
+    implementation "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
+    implementation "com.android.support:support-v4:$rootProject.supportLibraryVersion"
 
-    implementation 'com.android.support:recyclerview-v7:24.2.1'
-    implementation 'com.android.support:appcompat-v7:24.2.1'
-    implementation 'com.android.support:design:24.2.1'
 
-    implementation 'com.squareup.retrofit2:retrofit:2.1.0'
+    implementation "com.google.code.gson:gson:$rootProject.gsonVersion"
+
+    implementation "net.danlew:android.joda:$rootProject.jodaVersion"
+
+    implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
     //    compile 'com.squareup.retrofit2:converter-simplexml:2.1.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
-    implementation 'io.reactivex:rxandroid:1.2.1'
+
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.12'
+
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+
     // Because RxAndroid releases are few and far between, it is recommended you also
     // explicitly depend on RxJava's latest version for bug fixes and new features.
     implementation 'io.reactivex:rxjava:1.1.6'
     // Butterknife
-    implementation 'com.jakewharton:butterknife:8.0.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.0.1'
+    implementation "com.jakewharton:butterknife:$rootProject.butterknifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterknifeVersion"
 
     implementation 'com.google.dagger:dagger:2.0.2'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.0.2'

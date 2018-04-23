@@ -28,7 +28,7 @@ import okhttp3.OkHttpClient.Builder;
 import okhttp3.logging.HttpLoggingInterceptor;
 import pl.droidsonroids.retrofit2.JspoonConverterFactory;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import static org.wirbleibenalle.stressi.util.Constants.BASE_URL;
 
@@ -107,7 +107,7 @@ public class MainModule {
                 .baseUrl(BASE_URL)
                 .client(okHttpClient)
                 .addConverterFactory(JspoonConverterFactory.create()) // Simple XML converter
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create()) // RxJava adapter
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create()) // RxJava adapter
                 .build();
     }
 

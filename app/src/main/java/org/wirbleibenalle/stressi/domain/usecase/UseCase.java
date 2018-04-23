@@ -1,35 +1,26 @@
 package org.wirbleibenalle.stressi.domain.usecase;
 
-import rx.Observable;
-import rx.Observer;
-import rx.Scheduler;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.Subscriptions;
+
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by and on 26.10.16.
  */
-
 public abstract class UseCase {
-    private Subscription subscription = Subscriptions.empty();
-    private int id;
     private Scheduler newThreadScheduler;
     private Scheduler androidThread;
-
-    public int getId() {
-        return id;
-    }
+    protected Observable observable;
 
     public UseCase() {
-        this.id = (int) System.currentTimeMillis();
         this.newThreadScheduler = Schedulers.newThread();
         this.androidThread = AndroidSchedulers.mainThread();
     }
 
     public UseCase(Scheduler newThreadScheduler, Scheduler androidThread) {
-        this.id = (int) System.currentTimeMillis();
         this.newThreadScheduler = newThreadScheduler;
         this.androidThread = androidThread;
     }
@@ -40,25 +31,21 @@ public abstract class UseCase {
      */
     protected abstract Observable buildUseCaseObservable();
 
+
     /**
      * Executes the current use case.
-     *
-     * @param useCaseobserver The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
      */
-    @SuppressWarnings("unchecked")
-    public void execute(Observer useCaseobserver) {
-        this.subscription = this.buildUseCaseObservable()
+    public void execute(Observer observer) {
+        observable = buildUseCaseObservable()
             .subscribeOn(newThreadScheduler)
-            .observeOn(androidThread)
-            .subscribe(useCaseobserver);
+            .observeOn(androidThread);
+        observable.subscribeWith(observer);
     }
 
     /**
      * Unsubscribes from current {@link rx.Subscription}.
      */
-    public void unsubscribe() {
-        if (!subscription.isUnsubscribed()) {
-            subscription.unsubscribe();
-        }
-    }
+    public abstract void dispose();
+
+    public abstract void unsubscribe();
 }

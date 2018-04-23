@@ -13,8 +13,9 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import rx.Observable;
-import rx.functions.Func1;
+
+import io.reactivex.Observable;
+import io.reactivex.functions.Function;
 
 import static org.wirbleibenalle.stressi.util.Constants.BASE_URL;
 
@@ -39,8 +40,8 @@ public class ApiRepository {
         return eventService.getEvents(localDate.toString()).map(generateTransformFunction());
     }
 
-    private Func1<Events, List<EventItem>> generateTransformFunction() {
-        Func1<Events, List<EventItem>> transformFunction = events -> transformer.transform(events);
+    private Function<Events, List<EventItem>> generateTransformFunction() {
+        Function<Events, List<EventItem>> transformFunction = events -> transformer.transform(events);
         return transformFunction;
     }
 }

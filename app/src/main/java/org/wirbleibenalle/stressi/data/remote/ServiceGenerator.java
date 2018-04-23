@@ -9,7 +9,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import pl.droidsonroids.retrofit2.JspoonConverterFactory;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 
 /**
  * Created by and on 26.10.16.
