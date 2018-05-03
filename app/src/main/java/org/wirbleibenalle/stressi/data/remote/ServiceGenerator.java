@@ -1,13 +1,7 @@
 package org.wirbleibenalle.stressi.data.remote;
 
-import android.content.Context;
-
 import javax.inject.Inject;
 
-import okhttp3.Cache;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
-import pl.droidsonroids.retrofit2.JspoonConverterFactory;
 import retrofit2.Retrofit;
 
 /**

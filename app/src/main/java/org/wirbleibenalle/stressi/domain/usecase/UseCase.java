@@ -41,11 +41,4 @@ public abstract class UseCase {
             .observeOn(androidThread);
         observable.subscribeWith(observer);
     }
-
-    /**
-     * Unsubscribes from current {@link rx.Subscription}.
-     */
-    public abstract void dispose();
-
-    public abstract void unsubscribe();
 }

@@ -81,7 +81,7 @@ public class MainPresenter extends Presenter<MainView> implements ResponseErrorL
     }
 
     void onDestroy() {
-        getEventsUseCase.unsubscribe();
+        compositeDisposable.clear();
     }
 
     void onPageSelected(int position) {
@@ -119,7 +119,7 @@ public class MainPresenter extends Presenter<MainView> implements ResponseErrorL
     void executeCall() {
         getEventsUseCase.setLocalDate(currentLocalDate);
         getEventsUseCase.setPosition(currentPosition);
-        getEventsUseCase.dispose();
+        compositeDisposable.clear();
         getEventsUseCase.execute(new LoadEventObserver(currentPosition ));
     }
 

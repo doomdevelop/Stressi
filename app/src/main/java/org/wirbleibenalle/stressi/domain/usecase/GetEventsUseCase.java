@@ -27,14 +27,6 @@ public class GetEventsUseCase extends UseCase {
         return dataRepository.getEvents(localDate, position);
     }
 
-    @Override
-    public void dispose() {
-    }
-
-    @Override
-    public void unsubscribe() {
-    }
-
     public void setPosition(int position) {
         this.position = position;
     }

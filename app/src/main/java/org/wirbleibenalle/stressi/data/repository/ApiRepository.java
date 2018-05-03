@@ -13,11 +13,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-
 import io.reactivex.Observable;
 import io.reactivex.functions.Function;
-
-import static org.wirbleibenalle.stressi.util.Constants.BASE_URL;
 
 /**
  * Created by and on 26.10.16.
@@ -25,16 +22,16 @@ import static org.wirbleibenalle.stressi.util.Constants.BASE_URL;
 @Singleton
 public class ApiRepository {
     private final EventService eventService;
-    private final Transformer<Events,List<EventItem>> transformer;
+    private final Transformer<Events, List<EventItem>> transformer;
 
     @Inject
-    public ApiRepository(ServiceGenerator serviceGenerator,Transformer<Events, List<EventItem>> transformer ) {
+    public ApiRepository(ServiceGenerator serviceGenerator, Transformer<Events, List<EventItem>> transformer) {
         this.eventService = serviceGenerator.createService(EventService.class);
         this.transformer = transformer;
     }
 
     public Observable<List<EventItem>> getEvents(LocalDate localDate) {
-        if(transformer instanceof EventTransformer) {
+        if (transformer instanceof EventTransformer) {
             ((EventTransformer) transformer).setLocalDate(localDate);
         }
         return eventService.getEvents(localDate.toString()).map(generateTransformFunction());
