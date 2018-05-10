@@ -7,9 +7,6 @@ import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-/**
- * Created by and on 26.10.16.
- */
 public abstract class UseCase {
     private Scheduler newThreadScheduler;
     private Scheduler androidThread;
@@ -27,7 +24,7 @@ public abstract class UseCase {
 
 
     /**
-     * Builds an {@link rx.Observable} which will be used when executing the current {@link UseCase}.
+     * Builds an {@link io.reactivex.Observable} which will be used when executing the current {@link UseCase}.
      */
     protected abstract Observable buildUseCaseObservable();
 
@@ -39,6 +36,8 @@ public abstract class UseCase {
         observable = buildUseCaseObservable()
             .subscribeOn(newThreadScheduler)
             .observeOn(androidThread);
+        //TODO: pass instance of CompositeDisposable as parameter, add Observer
+        // compositeDisposable.add(observable.subscribeWith(observer))
         observable.subscribeWith(observer);
     }
 }

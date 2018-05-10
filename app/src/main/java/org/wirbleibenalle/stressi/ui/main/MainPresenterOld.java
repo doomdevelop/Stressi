@@ -1,7 +1,5 @@
 package org.wirbleibenalle.stressi.ui.main;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.OnLifecycleEvent;
 import android.os.Bundle;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
@@ -16,9 +14,8 @@ import org.wirbleibenalle.stressi.data.remote.ErrorHandler;
 import org.wirbleibenalle.stressi.data.remote.ResponseError;
 import org.wirbleibenalle.stressi.data.remote.ResponseErrorListener;
 import org.wirbleibenalle.stressi.domain.usecase.GetEventsUseCase;
-import org.wirbleibenalle.stressi.ui.base.BasePresenter;
+import org.wirbleibenalle.stressi.ui.base.Presenter;
 import org.wirbleibenalle.stressi.ui.model.EventItem;
-import org.wirbleibenalle.stressi.ui.model.ReceivedItems;
 import org.wirbleibenalle.stressi.util.EventItemContentAnalyzer;
 
 import java.util.List;
@@ -30,13 +27,14 @@ import io.reactivex.Observer;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
-import static org.wirbleibenalle.stressi.util.Constants.GMM_INTENT_URI_BERLIN;
 import static org.wirbleibenalle.stressi.util.Constants.GMM_INTENT_URI_LAT_LON;
+import static org.wirbleibenalle.stressi.util.Constants.GMM_INTENT_URI_BERLIN;
 import static org.wirbleibenalle.stressi.util.EventItemContentAnalyzer.createShortDescription;
 
-public class MainPresenter extends BasePresenter<MainActivityContract.View> implements
-    MainActivityContract.Presenter, ResponseErrorListener {
-
+/**
+ * Created by and on 26.10.16.
+ */
+public class MainPresenterOld extends Presenter<MainView> implements ResponseErrorListener {
     private static final String TAG = MainPresenterOld.class.getSimpleName();
     private final GetEventsUseCase getEventsUseCase;
     private final EventCacheController eventCacheController;
@@ -44,20 +42,25 @@ public class MainPresenter extends BasePresenter<MainActivityContract.View> impl
     private LocalDate currentLocalDate;
     private int currentPosition;
     private final CompositeDisposable compositeDisposable;
-    private ReceivedItems receivedItems;
 
     @Inject
-    public MainPresenter(GetEventsUseCase getEventsUseCase, EventCacheController eventCacheController, ErrorHandler errorHandler) {
+    public MainPresenterOld(GetEventsUseCase getEventsUseCase, EventCacheController eventCacheController, ErrorHandler errorHandler) {
         this.getEventsUseCase = getEventsUseCase;
         this.eventCacheController = eventCacheController;
         this.errorHandler = errorHandler;
         this.compositeDisposable = new CompositeDisposable();
-        initialize();
     }
 
-    public void initialize() {
+    @Override
+    public void initialize(Bundle extras) {
+        super.initialize(extras);
         currentLocalDate = LocalDate.now();
         currentPosition = Integer.MAX_VALUE / 2;
+        if (view != null) {
+            view.setDateToTitle(formatDateForTitle());
+            view.initializeViewComponents(currentPosition);
+        }
+        executeCall();
     }
 
     private String formatDateForTitle() {
@@ -66,10 +69,25 @@ public class MainPresenter extends BasePresenter<MainActivityContract.View> impl
     }
 
     @Override
-    public void onPageSelected(int position) {
+    public void onStart() {
+        super.onStart();
+        errorHandler.addResponseErrorListener(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        errorHandler.removeResponseErrorListener(this);
+    }
+
+    void onDestroy() {
+        compositeDisposable.clear();
+    }
+
+    void onPageSelected(int position) {
         onSwitchDateByPosition(position);
-        if (isViewAttached()) {
-            getView().showPullToRefreshProgress(position);
+        if (view != null) {
+            view.showPullToRefreshProgress(position);
         }
         executeCall();
     }
@@ -82,13 +100,13 @@ public class MainPresenter extends BasePresenter<MainActivityContract.View> impl
         }
         if (position > currentPosition) {
             currentLocalDate = currentLocalDate == null ? LocalDate.now().plusDays(position) :
-                currentLocalDate.plusDays(position - currentPosition);
+                    currentLocalDate.plusDays(position - currentPosition);
         } else {
             currentLocalDate = currentLocalDate.minusDays(currentPosition - position);
         }
         currentPosition = position;
-        if (isViewAttached()) {
-            getView().setDateToTitle(formatDateForTitle());
+        if (view != null) {
+            view.setDateToTitle(formatDateForTitle());
         }
     }
 
@@ -102,7 +120,7 @@ public class MainPresenter extends BasePresenter<MainActivityContract.View> impl
         getEventsUseCase.setLocalDate(currentLocalDate);
         getEventsUseCase.setPosition(currentPosition);
         compositeDisposable.clear();
-        getEventsUseCase.execute(new LoadEventObserver(currentPosition));
+        getEventsUseCase.execute(new LoadEventObserver(currentPosition ));
     }
 
     void onAddEventToCalendar(EventItem eventItem) {
@@ -115,21 +133,21 @@ public class MainPresenter extends BasePresenter<MainActivityContract.View> impl
         DateTime datetime = eventItem.getLocalDate().toDateTime(localTime);
 
         String shortTitle = EventItemContentAnalyzer.createShortDescription(eventItem);
-        if (isViewAttached()) {
-            getView().addEventToCalendar(eventItem, datetime, shortTitle);
+        if (view != null) {
+            view.addEventToCalendar(eventItem, datetime, shortTitle);
         }
     }
 
     void onShowEventOnMap(EventItem eventItem) {
-        if (!isViewAttached()) {
+        if (view == null) {
             return;
         }
         String address = eventItem.getAddress();
         if (address == null) {
-            getView().showEventOnMap(GMM_INTENT_URI_LAT_LON + eventItem.getPlace());
+            view.showEventOnMap(GMM_INTENT_URI_LAT_LON + eventItem.getPlace());
         } else {
             String[] adresses = address.split(",");
-            getView().showEventOnMap(adresses.length >= 2 ? GMM_INTENT_URI_LAT_LON + adresses[0] + GMM_INTENT_URI_BERLIN : GMM_INTENT_URI_LAT_LON + address);
+            view.showEventOnMap(adresses.length >= 2 ? GMM_INTENT_URI_LAT_LON + adresses[0] + GMM_INTENT_URI_BERLIN : GMM_INTENT_URI_LAT_LON + address);
         }
     }
 
@@ -144,20 +162,20 @@ public class MainPresenter extends BasePresenter<MainActivityContract.View> impl
         }
         textBuilder.append("\n\n").append(eventItem.getDescription());
         String text = textBuilder.toString();
-        if (isViewAttached()) {
-            getView().shareEvent(subject, text);
+        if (view != null) {
+            view.shareEvent(subject, text);
         }
     }
 
 
     @Override
     public void onResponseError(ResponseError responseError) {
-        if (!isViewAttached()) {
+        if (view == null) {
             return;
         }
         switch (responseError.getErrorType()) {
             case ResponseError.ERROR_NETWORK_CONNECTION:
-                getView().showNoConnectionErrorMessage();
+                view.showNoConnectionErrorMessage();
                 break;
             case ResponseError.ERROR_UNDEFINED:
                 if (responseError.getErrorCode() == 500) {
@@ -172,7 +190,7 @@ public class MainPresenter extends BasePresenter<MainActivityContract.View> impl
     public class LoadEventObserver implements Observer<List<EventItem>> {
         private final int position;
 
-        public LoadEventObserver(int position) {
+        public LoadEventObserver( int position) {
             this.position = position;
         }
 
@@ -182,73 +200,25 @@ public class MainPresenter extends BasePresenter<MainActivityContract.View> impl
 
         @Override
         public void onError(Throwable e) {
-            if (!isViewAttached()) {
+            if (view == null) {
                 return;
             }
-            getView().showError(e.getMessage());
-            getView().hidePullToRefreshProgress(position);
+            view.hidePullToRefreshProgress(position);
         }
 
         @Override
         public void onSubscribe(Disposable d) {
-            receivedItems = null;
             compositeDisposable.add(d);
         }
 
         @Override
         public void onNext(List<EventItem> events) {
             Log.d(TAG, "onNext : position" + position);
-            receivedItems = new ReceivedItems(events,position);
-            if (!isViewAttached()) {
+            if (view == null) {
                 return;
             }
-            getView().setItemsToRecycleView(events, position);
-            getView().hidePullToRefreshProgress(position);
+            view.setItemsToRecycleView(events, position);
+            view.hidePullToRefreshProgress(position);
         }
-    }
-
-    @OnLifecycleEvent(value = Lifecycle.Event.ON_CREATE)
-    protected void onCreate() {
-        if (isViewAttached()) {
-            getView().setDateToTitle(formatDateForTitle());
-            getView().initializeViewComponents(currentPosition, currentLocalDate);
-            if(receivedItems != null) {
-                if(receivedItems.position == currentPosition) {
-                    getView().setItemsToRecycleView(receivedItems.items, receivedItems.position);
-                    getView().hidePullToRefreshProgress(receivedItems.position);
-                }else{
-                    receivedItems = null;
-                }
-            }
-        }
-    }
-
-    @OnLifecycleEvent(value = Lifecycle.Event.ON_DESTROY)
-    protected void onDestroy() {
-        //not used
-    }
-
-    @OnLifecycleEvent(value = Lifecycle.Event.ON_START)
-    public void onStart() {
-        errorHandler.addResponseErrorListener(this);
-    }
-
-    @OnLifecycleEvent(value = Lifecycle.Event.ON_STOP)
-    public void onStop() {
-        errorHandler.removeResponseErrorListener(this);
-    }
-
-    @Override
-    public void onPresenterCreated() {
-        super.onPresenterCreated();
-        executeCall();
-    }
-
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-        Log.d("PRESENTER","onCleared()");
-        errorHandler.removeResponseErrorListener(this);
-        compositeDisposable.clear();
     }
 }

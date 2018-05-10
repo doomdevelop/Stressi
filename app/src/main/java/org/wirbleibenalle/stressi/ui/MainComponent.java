@@ -1,6 +1,6 @@
 package org.wirbleibenalle.stressi.ui;
 
-import org.wirbleibenalle.stressi.MainModule;
+import org.wirbleibenalle.stressi.di.MainModule;
 import org.wirbleibenalle.stressi.ui.main.MainActivity;
 
 import javax.inject.Singleton;

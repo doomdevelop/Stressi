@@ -30,14 +30,14 @@ import static org.mockito.Mockito.when;
  * Created by and on 24.01.17.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class MainPresenterTest {
+public class MainPresenterOldTest {
     @Mock
     DataRepository dataRepository;
     @Mock
     MainView mainView;
 
     @Mock
-    MainPresenter.LoadEventObserver loadEventObserver;
+    MainPresenterOld.LoadEventObserver loadEventObserver;
 
     @Captor
     ArgumentCaptor<List<EventItem>> observerArgument;
@@ -48,7 +48,7 @@ public class MainPresenterTest {
     EventCacheController eventCacheController;
     @Mock
     ErrorHandler errorHandler;
-    MainPresenter mainPresenter;
+    MainPresenterOld mainPresenter;
 
 
     @Before
@@ -60,7 +60,7 @@ public class MainPresenterTest {
         when(appContext.getResources()).thenReturn(resources);
         when(context.getApplicationContext()).thenReturn(appContext);
         JodaTimeAndroid.init(context);
-        mainPresenter = new MainPresenter(mockGetEventsUseCase, eventCacheController, errorHandler);
+        mainPresenter = new MainPresenterOld(mockGetEventsUseCase, eventCacheController, errorHandler);
         mainPresenter.setView(mainView);
     }
 }

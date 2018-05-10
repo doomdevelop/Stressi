@@ -1,12 +1,12 @@
 package org.wirbleibenalle.stressi;
 
 import android.app.Application;
-import android.content.Context;
 
 import com.squareup.leakcanary.LeakCanary;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
+import org.wirbleibenalle.stressi.di.MainModule;
 import org.wirbleibenalle.stressi.ui.DaggerMainComponent;
 import org.wirbleibenalle.stressi.ui.MainComponent;
 

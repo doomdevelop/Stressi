@@ -38,7 +38,7 @@ public class ApiRepository {
     }
 
     private Function<Events, List<EventItem>> generateTransformFunction() {
-        Function<Events, List<EventItem>> transformFunction = events -> transformer.transform(events);
+        Function<Events, List<EventItem>> transformFunction = transformer::transform;
         return transformFunction;
     }
 }

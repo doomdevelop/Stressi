@@ -1,18 +1,26 @@
 package org.wirbleibenalle.stressi.ui.main;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.wirbleibenalle.stressi.StressiApplication;
 import org.wirbleibenalle.stressi.stressfaktor.R;
-import org.wirbleibenalle.stressi.ui.animation.ZoomOutPageTransformer;
+import org.wirbleibenalle.stressi.ui.animation.BounceInterpolator;
 import org.wirbleibenalle.stressi.ui.base.BaseActivity;
+import org.wirbleibenalle.stressi.ui.base.StressiViewModelFactory;
 import org.wirbleibenalle.stressi.ui.component.main.EventItemViewHolder;
 import org.wirbleibenalle.stressi.ui.component.pageView.CustomPagerAdapter;
 import org.wirbleibenalle.stressi.ui.model.EventItem;
@@ -23,12 +31,22 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 
-public class MainActivity extends BaseActivity implements MainView, EventItemViewHolder.EventItemViewHolderListener {
+public class MainActivity extends BaseActivity<MainActivityContract.View, MainActivityContract.Presenter>
+    implements MainActivityContract.View, EventItemViewHolder.EventItemViewHolderListener {
+
+    MainPresenter presenter;
 
     @Inject
-    MainPresenter presenter;
+    StressiViewModelFactory viewModelFactory;
     @BindView(R.id.viewpager)
     ViewPager viewPager;
+    @BindView(R.id.coordinatorLayout)
+    CoordinatorLayout coordinatorLayout;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.txt_toolbar_title)
+    protected TextView tvTitle;
+
     private static final String TAG = CustomPagerAdapter.class.getSimpleName();
 
     private CustomPagerAdapter customPagerAdapter;
@@ -40,9 +58,13 @@ public class MainActivity extends BaseActivity implements MainView, EventItemVie
     }
 
     @Override
-    protected void initializePresenter() {
-        super.presenter = presenter;
-        presenter.setView(this);
+    protected MainPresenter initPresenter() {
+        presenter = ViewModelProviders.of(this, viewModelFactory).get(MainPresenter.class);
+        if (!presenter.getStateBundle().getBoolean(MainPresenter.class.getSimpleName(), false)) {
+            presenter.getStateBundle().putBoolean(MainPresenter.class.getSimpleName(), true);
+            presenter.onPresenterCreated();
+        }
+        return presenter;
     }
 
     @Override
@@ -68,12 +90,12 @@ public class MainActivity extends BaseActivity implements MainView, EventItemVie
 
     @Override
     public void showError(String errorMessage) {
-
+        super.showError(errorMessage);
     }
 
     @Override
-    public void initializeViewComponents(int position) {
-        customPagerAdapter = new CustomPagerAdapter(this, LocalDate.now(), pageAdapterCallback, this);
+    public void initializeViewComponents(int position, LocalDate currentDate) {
+        customPagerAdapter = new CustomPagerAdapter(this, currentDate, pageAdapterCallback, this);
         viewPager.setAdapter(customPagerAdapter);
         viewPager.setCurrentItem(position);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -163,7 +185,7 @@ public class MainActivity extends BaseActivity implements MainView, EventItemVie
 
     private CustomPagerAdapter.PageAdapterCallback pageAdapterCallback = new CustomPagerAdapter.PageAdapterCallback() {
         @Override
-        public void onListItemclicked(int position) {
+        public void onListItemClicked(int position) {
 
         }
 
@@ -186,5 +208,31 @@ public class MainActivity extends BaseActivity implements MainView, EventItemVie
     @Override
     public void onAddEventToCalendarClicked(EventItem eventItem) {
         presenter.onAddEventToCalendar(eventItem);
+    }
+
+    @Override
+    protected Snackbar createSnackbar(String message) {
+        Snackbar snackbar = Snackbar
+            .make(coordinatorLayout, message, Snackbar.LENGTH_LONG);
+        return snackbar;
+    }
+
+    @Override
+    protected void initializeToolbar() {
+        setSupportActionBar(toolbar);
+    }
+
+    @Override
+    protected void setTitle(String title) {
+        tvTitle.setText(title);
+    }
+
+    @Override
+    protected void animateTitle() {
+        final Animation myAnim = AnimationUtils.loadAnimation(this, R.anim.bounce);
+        BounceInterpolator interpolator = new BounceInterpolator(0.2, 20);
+        myAnim.setInterpolator(interpolator);
+
+        tvTitle.startAnimation(myAnim);
     }
 }

@@ -1,4 +1,4 @@
-package org.wirbleibenalle.stressi;
+package org.wirbleibenalle.stressi.di;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,6 +18,7 @@ import org.wirbleibenalle.stressi.data.transformer.Transformer;
 import org.wirbleibenalle.stressi.ui.model.EventItem;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
@@ -25,22 +26,22 @@ import dagger.Module;
 import dagger.Provides;
 import okhttp3.OkHttpClient;
 import okhttp3.OkHttpClient.Builder;
-import okhttp3.logging.HttpLoggingInterceptor;
 import pl.droidsonroids.retrofit2.JspoonConverterFactory;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import static org.wirbleibenalle.stressi.util.Constants.BASE_URL;
 
-/**
- * Created by and on 26.10.16.
- */
-@Module
+@Module(includes = ViewModelModule.class)
 public class MainModule {
     private final Context context;
     private static final String SHARE_PREF_NAME = "stressfaktor_pref";
+    //timeout in min
+    private static final int CONNECT_TIMEOUT = 5;
+    private static final int READ_TIMEOUT = 2;
+    private static final int WRITE_TIMEOUT = 1;
 
-    MainModule(Context context) {
+    public MainModule(Context context) {
         this.context = context;
     }
 
@@ -79,7 +80,7 @@ public class MainModule {
     @Singleton
     public ConnectivityManager provideConnectivityManager(Context context) {
         ConnectivityManager connMgr = (ConnectivityManager)
-                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return connMgr;
 
     }
@@ -96,6 +97,9 @@ public class MainModule {
 //        addLoggingInterceptor(builder);
         builder.addInterceptor(errorHandlerInterceptor);
         addCacheInterceptor(builder, cacheController);
+        builder.connectTimeout(CONNECT_TIMEOUT, TimeUnit.MINUTES)
+            .readTimeout(READ_TIMEOUT, TimeUnit.MINUTES)
+            .writeTimeout(WRITE_TIMEOUT, TimeUnit.MINUTES);
         OkHttpClient client = builder.build();
         return client;
     }
@@ -104,11 +108,11 @@ public class MainModule {
     @Singleton
     public Retrofit provideRetrofit(Context context, OkHttpClient okHttpClient) {
         return new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .client(okHttpClient)
-                .addConverterFactory(JspoonConverterFactory.create()) // Simple XML converter
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create()) // RxJava adapter
-                .build();
+            .baseUrl(BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(JspoonConverterFactory.create()) // Simple XML converter
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create()) // RxJava adapter
+            .build();
     }
 
     @Provides
@@ -129,15 +133,14 @@ public class MainModule {
         return new ErrorHandler(errorHandlerInterceptor);
     }
 
-    private void addLoggingInterceptor(final OkHttpClient.Builder builder) {
-
-        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
-        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        builder.addInterceptor(httpLoggingInterceptor);
-    }
+//    private void addLoggingInterceptor(final OkHttpClient.Builder builder) {
+//
+//        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+//        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+//        builder.addInterceptor(httpLoggingInterceptor);
+//    }
 
     private void addCacheInterceptor(final OkHttpClient.Builder builder, CacheController cacheController) {
-        CacheInterceptor cacheInterceptor = new CacheInterceptor(cacheController);
-        builder.addInterceptor(cacheInterceptor);
+        builder.addInterceptor(new CacheInterceptor(cacheController));
     }
 }
