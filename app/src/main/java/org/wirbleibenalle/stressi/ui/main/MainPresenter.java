@@ -19,6 +19,8 @@ import org.wirbleibenalle.stressi.domain.usecase.GetEventsUseCase;
 import org.wirbleibenalle.stressi.ui.base.BasePresenter;
 import org.wirbleibenalle.stressi.ui.model.EventItem;
 import org.wirbleibenalle.stressi.ui.model.ReceivedItems;
+import org.wirbleibenalle.stressi.util.Constants;
+import org.wirbleibenalle.stressi.util.DateUtil;
 import org.wirbleibenalle.stressi.util.EventItemContentAnalyzer;
 
 import java.util.List;
@@ -29,6 +31,7 @@ import javax.inject.Inject;
 import io.reactivex.Observer;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import timber.log.Timber;
 
 import static org.wirbleibenalle.stressi.util.Constants.GMM_INTENT_URI_BERLIN;
 import static org.wirbleibenalle.stressi.util.Constants.GMM_INTENT_URI_LAT_LON;
@@ -37,7 +40,6 @@ import static org.wirbleibenalle.stressi.util.EventItemContentAnalyzer.createSho
 public class MainPresenter extends BasePresenter<MainActivityContract.View> implements
     MainActivityContract.Presenter, ResponseErrorListener {
 
-    private static final String TAG = MainPresenterOld.class.getSimpleName();
     private final GetEventsUseCase getEventsUseCase;
     private final EventCacheController eventCacheController;
     private final ErrorHandler errorHandler;
@@ -60,11 +62,6 @@ public class MainPresenter extends BasePresenter<MainActivityContract.View> impl
         currentPosition = Integer.MAX_VALUE / 2;
     }
 
-    private String formatDateForTitle() {
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("EE d MMMM y").withLocale(Locale.GERMANY);
-        return currentLocalDate.toString(formatter);
-    }
-
     @Override
     public void onPageSelected(int position) {
         onSwitchDateByPosition(position);
@@ -76,7 +73,7 @@ public class MainPresenter extends BasePresenter<MainActivityContract.View> impl
 
     @VisibleForTesting
     void onSwitchDateByPosition(int position) {
-        Log.d(TAG, "position=" + position + " currentPosition=" + currentPosition);
+        Timber.d( "position=" + position + " currentPosition=" + currentPosition);
         if (position == currentPosition) {
             return;
         }
@@ -88,7 +85,7 @@ public class MainPresenter extends BasePresenter<MainActivityContract.View> impl
         }
         currentPosition = position;
         if (isViewAttached()) {
-            getView().setDateToTitle(formatDateForTitle());
+            getView().setDateToTitle(DateUtil.formatDateForTitle(currentLocalDate));
         }
     }
 
@@ -138,11 +135,14 @@ public class MainPresenter extends BasePresenter<MainActivityContract.View> impl
 
         String subject = eventItem.getPlace() + ": " + descriptionShort;
         StringBuilder textBuilder = new StringBuilder(eventItem.getPlace());
-        textBuilder.append(" ").append(eventItem.getTime()).append("\n");
+
         if (!eventItem.getPlace().equals(eventItem.getAddress())) {
-            textBuilder.append(eventItem.getAddress());
+            textBuilder.append("\n").append(eventItem.getAddress());
         }
-        textBuilder.append("\n\n").append(eventItem.getDescription());
+        textBuilder.append("\n\n").append(DateUtil.formatDateForTitle(eventItem.getLocalDate()))
+            .append(" ").append(eventItem.getTime());
+        textBuilder.append("\n\n").append(eventItem.getDescription())
+            .append("\n\n").append(Constants.FULL_URL).append(eventItem.getLocalDate().toString());
         String text = textBuilder.toString();
         if (isViewAttached()) {
             getView().shareEvent(subject, text);
@@ -197,7 +197,7 @@ public class MainPresenter extends BasePresenter<MainActivityContract.View> impl
 
         @Override
         public void onNext(List<EventItem> events) {
-            Log.d(TAG, "onNext : position" + position);
+            Timber.d( "onNext : position" + position);
             receivedItems = new ReceivedItems(events,position);
             if (!isViewAttached()) {
                 return;
@@ -210,7 +210,7 @@ public class MainPresenter extends BasePresenter<MainActivityContract.View> impl
     @OnLifecycleEvent(value = Lifecycle.Event.ON_CREATE)
     protected void onCreate() {
         if (isViewAttached()) {
-            getView().setDateToTitle(formatDateForTitle());
+            getView().setDateToTitle(DateUtil.formatDateForTitle(currentLocalDate));
             getView().initializeViewComponents(currentPosition, currentLocalDate);
             if(receivedItems != null) {
                 if(receivedItems.position == currentPosition) {
@@ -247,7 +247,7 @@ public class MainPresenter extends BasePresenter<MainActivityContract.View> impl
     @Override
     protected void onCleared() {
         super.onCleared();
-        Log.d("PRESENTER","onCleared()");
+        Timber.d("onCleared()");
         errorHandler.removeResponseErrorListener(this);
         compositeDisposable.clear();
     }

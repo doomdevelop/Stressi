@@ -17,6 +17,6 @@ public class Event {
     public String address;
     @Selector(".spalte_termintext")
     public String placeAndDescription;
-    @Selector(value = ".spalte_termintext", attr = "title")
+    @Selector(value = ".spalte_termintext")
     public String eventTitle;
 }

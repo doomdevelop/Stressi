@@ -30,6 +30,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.BindView;
+import timber.log.Timber;
 
 public class MainActivity extends BaseActivity<MainActivityContract.View, MainActivityContract.Presenter>
     implements MainActivityContract.View, EventItemViewHolder.EventItemViewHolderListener {
@@ -103,19 +104,19 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 //positionOffset by page change from 0.0-1.0
-                Log.i(TAG, "onPageScrolled() position " + position + " positionOffset: " + positionOffset + " positionOffsetPixels " + positionOffsetPixels);
+                Timber.i(TAG, "onPageScrolled() position " + position + " positionOffset: " + positionOffset + " positionOffsetPixels " + positionOffsetPixels);
             }
 
             @Override
             public void onPageSelected(int position) {
-                Log.i(TAG, "onPageSelected() " + position);
+                Timber.i(TAG, "onPageSelected() " + position);
                 animateTitle();
                 presenter.onPageSelected(position);
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                Log.d(TAG, "onPageSelected() state " + state);
+                Timber.d(TAG, "onPageSelected() state " + state);
             }
         });
     }
@@ -123,7 +124,7 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
     @Override
     public void setItemsToRecycleView(List<EventItem> events, int position) {
         customPagerAdapter.setItemsToRecycleView(events, position);
-        Log.d("MainActivity", "size events: " + events.size());
+        Timber.d( "size events: " + events.size());
     }
 
     @Override

@@ -20,24 +20,23 @@ import org.wirbleibenalle.stressi.ui.model.EventItem;
 import java.io.InputStream;
 import java.util.List;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 /**
  * Created by and on 24.01.17.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class MainPresenterOldTest {
+public class MainPresenterTest {
     @Mock
     DataRepository dataRepository;
     @Mock
-    MainView mainView;
+    MainActivityContract.View mainView;
 
     @Mock
-    MainPresenterOld.LoadEventObserver loadEventObserver;
+    MainPresenter.LoadEventObserver loadEventObserver;
 
     @Captor
     ArgumentCaptor<List<EventItem>> observerArgument;
@@ -48,7 +47,7 @@ public class MainPresenterOldTest {
     EventCacheController eventCacheController;
     @Mock
     ErrorHandler errorHandler;
-    MainPresenterOld mainPresenter;
+    MainPresenter mainPresenter;
 
 
     @Before
@@ -60,7 +59,7 @@ public class MainPresenterOldTest {
         when(appContext.getResources()).thenReturn(resources);
         when(context.getApplicationContext()).thenReturn(appContext);
         JodaTimeAndroid.init(context);
-        mainPresenter = new MainPresenterOld(mockGetEventsUseCase, eventCacheController, errorHandler);
-        mainPresenter.setView(mainView);
+        mainPresenter = new MainPresenter(mockGetEventsUseCase, eventCacheController, errorHandler);
+        mainPresenter.attachView(mainView);
     }
 }

@@ -27,6 +27,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import timber.log.Timber;
+
 /**
  * Created by and on 02.11.16.
  */
@@ -44,7 +46,7 @@ public class CustomPagerAdapter extends PagerAdapter {
 
     public CustomPagerAdapter(Context context, LocalDate localDate, PageAdapterCallback
             pageAdapterCallback, EventItemViewHolderListener eventItemViewHolderListener) {
-        Log.d(TAG, "constructor CustomPagerAdapter()");
+        Timber.d(TAG, "constructor CustomPagerAdapter()");
         setPageTitle(localDate);
         this.context = context;
         this.pageAdapterCallback = pageAdapterCallback;
@@ -62,7 +64,7 @@ public class CustomPagerAdapter extends PagerAdapter {
         }
         if(viewHolderMap.containsKey(position)) {
             receivedItems = null;
-            Log.d(TAG, "setItemsToRecycleView() currentDay: " + eventsAdapter.getCurrentDay() +
+            Timber.d(TAG, "setItemsToRecycleView() currentDay: " + eventsAdapter.getCurrentDay() +
                 " eventItemList.get(0)");
             viewHolderMap.get(position).eventsAdapter.setItems(events);
             notifyDataSetChanged();
@@ -107,7 +109,7 @@ public class CustomPagerAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup collection, int position) {
-        Log.d(TAG, "instantiateItem position : " + position + " collection.getChildCount(): " + collection.getChildCount());
+        Timber.d(TAG, "instantiateItem position : " + position + " collection.getChildCount(): " + collection.getChildCount());
         LayoutInflater inflater = LayoutInflater.from(context);
         ViewGroup layout = (ViewGroup) inflater.inflate(R.layout.event_view_page, collection, false);
         refreshEventList = (SwipeRefreshLayout) layout.findViewById(R.id.refresh_events_list);

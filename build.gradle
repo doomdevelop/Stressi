@@ -54,4 +54,5 @@ ext {
     rxjava2 = '2.1.12'
     rxandroid = '2.0.2'
     leakcanary = '1.5.4'
+    timber = '4.7.0'
 }
