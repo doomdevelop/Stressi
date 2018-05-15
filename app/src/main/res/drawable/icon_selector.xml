@@ -4,12 +4,10 @@
         <shape xmlns:android="http://schemas.android.com/apk/res/android"
                android:innerRadius="0dp"
                android:shape="oval">
-            <solid android:color="@color/colorWarmGray2"/>
+            <solid android:color="@color/colorWarmGray"/>
             <size
                 android:width="36dp"
                 android:height="36dp"/>
-            <stroke
-                android:color="@color/colorWarmGray2"/>
         </shape>
     </item>
     <item android:state_focused="true"
@@ -17,12 +15,10 @@
         <shape xmlns:android="http://schemas.android.com/apk/res/android"
                android:innerRadius="0dp"
                android:shape="oval">
-            <solid android:color="@color/colorWarmGray"/>
+            <solid android:color="@color/colorWarmGray2"/>
             <size
                 android:width="36dp"
                 android:height="36dp"/>
-            <stroke
-                android:color="@color/colorWarmGray"/>
         </shape>
     </item>
     <item android:state_focused="false"
@@ -30,12 +26,10 @@
         <shape xmlns:android="http://schemas.android.com/apk/res/android"
                android:innerRadius="0dp"
                android:shape="oval">
-            <solid android:color="@color/colorWarmGray"/>
+            <solid android:color="@color/colorWarmGray2"/>
             <size
                 android:width="36dp"
                 android:height="36dp"/>
-            <stroke
-                android:color="@color/colorWarmGray"/>
         </shape>
     </item>
 </selector>
