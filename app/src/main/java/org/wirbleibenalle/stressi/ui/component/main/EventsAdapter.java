@@ -15,10 +15,6 @@ import timber.log.Timber;
 
 import static org.wirbleibenalle.stressi.ui.component.main.EventItemViewHolder.EventItemViewHolderListener;
 
-/**
- * Created by and on 27.10.16.
- */
-
 public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<EventItem> eventItemList;
     private final RecyclerItemListener onRowClickListener;

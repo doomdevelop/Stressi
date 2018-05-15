@@ -11,9 +11,6 @@ import javax.inject.Inject;
 import io.reactivex.Observable;
 
 
-/**
- * Created by and on 26.10.16.
- */
 public class GetEventsUseCase extends UseCase<List<EventItem>> {
     private final DataRepository dataRepository;
     private LocalDate localDate;

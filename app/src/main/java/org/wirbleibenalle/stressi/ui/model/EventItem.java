@@ -7,9 +7,6 @@ import android.view.ViewDebug;
 
 import org.joda.time.LocalDate;
 
-/**
- * Created by and on 27.10.16.
- */
 public class EventItem {
     private String time;
     private String address;

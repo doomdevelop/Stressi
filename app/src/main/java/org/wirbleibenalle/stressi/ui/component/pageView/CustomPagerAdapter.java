@@ -27,9 +27,6 @@ import java.util.Map;
 
 import timber.log.Timber;
 
-/**
- * Created by and on 02.11.16.
- */
 public class CustomPagerAdapter extends PagerAdapter {
     private String pageTitle;
     private final Context context;

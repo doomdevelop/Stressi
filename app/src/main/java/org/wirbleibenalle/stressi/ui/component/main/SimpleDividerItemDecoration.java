@@ -8,10 +8,6 @@ import android.view.View;
 
 import org.wirbleibenalle.stressi.stressfaktor.R;
 
-/**
- * Created by and on 28.10.16.
- */
-
 public class SimpleDividerItemDecoration extends RecyclerView.ItemDecoration {
     private final Drawable mDivider;
 

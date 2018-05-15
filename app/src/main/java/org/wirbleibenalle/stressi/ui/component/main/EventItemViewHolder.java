@@ -13,10 +13,6 @@ import org.wirbleibenalle.stressi.ui.model.EventItem;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by and on 27.10.16.
- */
-
 public class EventItemViewHolder extends RecyclerView.ViewHolder {
 
     private final RecyclerItemListener onRowClickListener;

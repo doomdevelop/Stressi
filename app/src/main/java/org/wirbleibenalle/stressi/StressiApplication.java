@@ -16,9 +16,6 @@ import org.wirbleibenalle.stressi.ui.MainComponent;
 import timber.log.Timber;
 import timber.log.Timber.DebugTree;
 
-/**
- * Created by and on 26.10.16.
- */
 
 public class StressiApplication extends Application {
     private MainComponent mainComponent;

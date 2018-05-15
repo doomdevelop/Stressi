@@ -1,9 +1,5 @@
 package org.wirbleibenalle.stressi.data.remote;
 
-/**
- * Created by and on 26.10.16.
- */
-
 public class ResponseError {
     private final int errorType;
     private final int errorCode;

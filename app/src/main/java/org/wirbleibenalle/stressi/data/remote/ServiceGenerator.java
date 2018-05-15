@@ -4,10 +4,6 @@ import javax.inject.Inject;
 
 import retrofit2.Retrofit;
 
-/**
- * Created by and on 26.10.16.
- */
-
 public class ServiceGenerator {
     private final Retrofit retrofit;
 

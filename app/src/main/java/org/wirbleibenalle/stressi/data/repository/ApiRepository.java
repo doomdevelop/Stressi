@@ -16,9 +16,6 @@ import javax.inject.Singleton;
 import io.reactivex.Observable;
 import io.reactivex.functions.Function;
 
-/**
- * Created by and on 26.10.16.
- */
 @Singleton
 public class ApiRepository {
     private final EventService eventService;

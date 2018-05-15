@@ -46,10 +46,6 @@ import static org.wirbleibenalle.stressi.data.model.Event.NO_VALUE;
 import static org.wirbleibenalle.stressi.util.Constants.GMM_INTENT_URI_BERLIN;
 import static org.wirbleibenalle.stressi.util.Constants.GMM_INTENT_URI_LAT_LON;
 
-/**
- * Created by and on 24.01.17.
- */
-
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({CompositeDisposable.class, DateTime.class,BaseObserver.class})
 public class MainPresenterTest {

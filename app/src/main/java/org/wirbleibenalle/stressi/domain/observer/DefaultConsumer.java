@@ -2,9 +2,6 @@ package org.wirbleibenalle.stressi.domain.observer;
 
 import io.reactivex.functions.Consumer;
 
-/**
- * Created by and on 26.10.16.
- */
 
 public abstract class DefaultConsumer<T> implements Consumer<T>{
     public abstract void onCompleted();
