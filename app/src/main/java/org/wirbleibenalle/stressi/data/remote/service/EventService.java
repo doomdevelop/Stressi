@@ -5,7 +5,6 @@ import org.wirbleibenalle.stressi.data.model.Events;
 import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
-import retrofit2.http.Url;
 
 /**
  * Created by and on 26.10.16.

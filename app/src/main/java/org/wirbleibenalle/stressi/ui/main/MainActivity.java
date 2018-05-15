@@ -5,14 +5,16 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
+
+import com.google.common.base.Preconditions;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -32,10 +34,12 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import timber.log.Timber;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class MainActivity extends BaseActivity<MainActivityContract.View, MainActivityContract.Presenter>
     implements MainActivityContract.View, EventItemViewHolder.EventItemViewHolderListener {
 
-    MainPresenter presenter;
+    private MainPresenter presenter;
 
     @Inject
     StressiViewModelFactory viewModelFactory;
@@ -47,8 +51,6 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
     Toolbar toolbar;
     @BindView(R.id.txt_toolbar_title)
     protected TextView tvTitle;
-
-    private static final String TAG = CustomPagerAdapter.class.getSimpleName();
 
     private CustomPagerAdapter customPagerAdapter;
 
@@ -74,19 +76,8 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
     public int getLayoutId() {
         return R.layout.activity_main;
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        presenter.onDestroy();
     }
 
     @Override
@@ -104,27 +95,27 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 //positionOffset by page change from 0.0-1.0
-                Timber.i(TAG, "onPageScrolled() position " + position + " positionOffset: " + positionOffset + " positionOffsetPixels " + positionOffsetPixels);
+                Timber.i( "onPageScrolled() position " + position + " positionOffset: " + positionOffset + " positionOffsetPixels " + positionOffsetPixels);
             }
 
             @Override
             public void onPageSelected(int position) {
-                Timber.i(TAG, "onPageSelected() " + position);
+                Timber.i( "onPageSelected() %s", position);
                 animateTitle();
                 presenter.onPageSelected(position);
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                Timber.d(TAG, "onPageSelected() state " + state);
+                Timber.d("onPageSelected() state %s", state);
             }
         });
     }
 
     @Override
-    public void setItemsToRecycleView(List<EventItem> events, int position) {
+    public void setItemsToRecycleView(@NonNull List<EventItem> events, int position) {
         customPagerAdapter.setItemsToRecycleView(events, position);
-        Timber.d( "size events: " + events.size());
+        Timber.d("size events: %s", events.size());
     }
 
     @Override
@@ -139,6 +130,7 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
 
     @Override
     public void setDateToTitle(String title) {
+        checkNotNull(title, "date title can not be null");
         setTitle(title);
     }
 
@@ -149,6 +141,9 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
 
     @Override
     public void addEventToCalendar(EventItem eventItem, DateTime datetime, String shortTitle) {
+        checkNotNull(eventItem,"can not add eventItem as null to calendar");
+        checkNotNull(datetime,"can not add datetime as null to calendar");
+        checkNotNull(shortTitle,"can not add shortTitle as null to calendar");
         Intent intent = new Intent(Intent.ACTION_EDIT);
         intent.setType("vnd.android.cursor.item/event");
         intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, datetime.getMillis());
@@ -165,6 +160,7 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
 
     @Override
     public void showEventOnMap(String address) {
+        checkNotNull(address,"event address can not be null");
         Uri gmmIntentUri = Uri.parse(address);
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
         mapIntent.setPackage("com.google.android.apps.maps");
@@ -174,7 +170,7 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
     }
 
     @Override
-    public void shareEvent(String subject, String text) {
+    public void shareEvent(@NonNull String subject,@NonNull String text) {
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
@@ -184,7 +180,12 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
         }
     }
 
-    private CustomPagerAdapter.PageAdapterCallback pageAdapterCallback = new CustomPagerAdapter.PageAdapterCallback() {
+    @Override
+    public void showShareEventError() {
+        showError(getString(R.string.shareEventError));
+    }
+
+    private final CustomPagerAdapter.PageAdapterCallback pageAdapterCallback = new CustomPagerAdapter.PageAdapterCallback() {
         @Override
         public void onListItemClicked(int position) {
 
@@ -213,9 +214,7 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
 
     @Override
     protected Snackbar createSnackbar(String message) {
-        Snackbar snackbar = Snackbar
-            .make(coordinatorLayout, message, Snackbar.LENGTH_LONG);
-        return snackbar;
+        return Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_LONG);
     }
 
     @Override

@@ -17,8 +17,8 @@ import io.reactivex.Observable;
  */
 @Singleton
 public class DataRepository {
-    private ApiRepository apiRepository;
-    private LocalRepository localRepository;
+    private final ApiRepository apiRepository;
+    private final LocalRepository localRepository;
 
     @Inject
     public DataRepository(ApiRepository apiRepository, LocalRepository localRepository) {
@@ -26,7 +26,7 @@ public class DataRepository {
         this.localRepository = localRepository;
     }
 
-    public Observable<List<EventItem>> getEvents(LocalDate localDate, Integer day) {
+    public Observable<List<EventItem>> getEvents(LocalDate localDate) {
         return apiRepository.getEvents(localDate);
     }
 }

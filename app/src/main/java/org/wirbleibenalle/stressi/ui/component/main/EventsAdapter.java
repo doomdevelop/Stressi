@@ -5,14 +5,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.wirbleibenalle.stressi.data.model.Event;
 import org.wirbleibenalle.stressi.stressfaktor.R;
 import org.wirbleibenalle.stressi.ui.model.EventItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.wirbleibenalle.stressi.ui.component.main.EventItemViewHolder.*;
+import timber.log.Timber;
+
+import static org.wirbleibenalle.stressi.ui.component.main.EventItemViewHolder.EventItemViewHolderListener;
 
 /**
  * Created by and on 27.10.16.
@@ -58,7 +59,11 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         EventItemViewHolder eventItemViewHolder = (EventItemViewHolder) holder;
         EventItem eventItem = eventItemList.get(position);
-        eventItemViewHolder.render(position, eventItem);
+        if(eventItem != null) {
+            eventItemViewHolder.render(position, eventItem);
+        }else{
+            Timber.e("Event Item on Position "+position+" is Null");
+        }
     }
 
     @Override

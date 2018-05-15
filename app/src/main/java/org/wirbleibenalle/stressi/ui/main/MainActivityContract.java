@@ -19,13 +19,13 @@ public class MainActivityContract {
 
         void setDateToTitle(String title);
 
-        void showNoConnectionErrorMessage();
-
         void addEventToCalendar(EventItem eventItem, DateTime datetime, String shortTitle);
 
         void showEventOnMap(String address);
 
         void shareEvent(String Subject, String text);
+
+        void showShareEventError();
     }
 
     interface Presenter extends BaseContract.Presenter<MainActivityContract.View> {

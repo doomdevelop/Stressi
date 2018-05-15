@@ -11,6 +11,8 @@ import javax.inject.Inject;
 public class EventCacheController extends CacheController<CacheEvent> {
     final static long CACHE_MAX_AGE = 10*60*1000;//10min cache limit
     private final static String PULL_KEY = "pull";
+    private final Object syncCash = new Object();
+    private final Object syncPullToRefresh = new Object();
 
     @Inject
     public EventCacheController(SharedPreferences sharedPreferences){
@@ -19,30 +21,36 @@ public class EventCacheController extends CacheController<CacheEvent> {
 
     @Override
     public CacheEvent getLastCache(String date) {
-        String serialised = sharedPreferences.getString(date,null);
-        if(serialised != null){
-            Gson gson = new Gson();
-            CacheEvent cacheEvent = gson.fromJson(serialised,CacheEvent.class);
-            long currentTime = System.currentTimeMillis();
-            if(currentTime-cacheEvent.timestamp >CACHE_MAX_AGE){
-                sharedPreferences.edit().remove(date).commit();
-                return null;
+        synchronized (syncCash) {
+            String serialised = sharedPreferences.getString(date, null);
+            if (serialised != null) {
+                Gson gson = new Gson();
+                CacheEvent cacheEvent = gson.fromJson(serialised, CacheEvent.class);
+                long currentTime = System.currentTimeMillis();
+                if (currentTime - cacheEvent.timestamp > CACHE_MAX_AGE) {
+                    sharedPreferences.edit().remove(date).apply();
+                    return null;
+                }
+                return cacheEvent;
             }
-            return cacheEvent;
+            return null;
         }
-        return null;
     }
 
     @Override
     public void cache(CacheEvent cacheEvent) {
         Gson gson = new Gson();
         String serialised = gson.toJson(cacheEvent);
-        sharedPreferences.edit().putString(cacheEvent.date,serialised).commit();
+        synchronized (syncCash) {
+            sharedPreferences.edit().putString(cacheEvent.date, serialised).apply();
+        }
     }
 
     @Override
     public void setOnPullToRefresh(String date, boolean value) {
-        sharedPreferences.edit().putBoolean(date+PULL_KEY,value).commit();
+        synchronized (syncPullToRefresh) {
+            sharedPreferences.edit().putBoolean(date + PULL_KEY, value).apply();
+        }
     }
 
     @Override
@@ -50,7 +58,9 @@ public class EventCacheController extends CacheController<CacheEvent> {
         if(date == null){
             return false;
         }
-        return sharedPreferences.getBoolean(date+PULL_KEY,false);
+        synchronized (syncPullToRefresh) {
+            return sharedPreferences.getBoolean(date + PULL_KEY, false);
+        }
     }
 
     @Override

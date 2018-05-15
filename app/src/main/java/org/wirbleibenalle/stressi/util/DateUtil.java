@@ -8,7 +8,7 @@ import java.util.Locale;
 
 public class DateUtil {
     public static String formatDateForTitle(LocalDate localDate) {
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("EE d MMMM y").withLocale(Locale.GERMANY);
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("EE d MMMM y").withLocale(Locale.getDefault());
         return localDate.toString(formatter);
     }
 }

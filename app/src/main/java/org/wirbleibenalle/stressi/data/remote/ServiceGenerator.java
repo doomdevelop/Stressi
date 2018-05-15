@@ -9,7 +9,7 @@ import retrofit2.Retrofit;
  */
 
 public class ServiceGenerator {
-    private Retrofit retrofit;
+    private final Retrofit retrofit;
 
     @Inject
     public ServiceGenerator(Retrofit retrofit) {

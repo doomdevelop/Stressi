@@ -2,19 +2,24 @@ package org.wirbleibenalle.stressi.ui.model;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.view.ViewDebug;
 
 import org.joda.time.LocalDate;
 
 /**
  * Created by and on 27.10.16.
  */
-
 public class EventItem {
-    private final String time;
-    private final String address;
-    private final String place;
-    private final String description;
-    private final LocalDate localDate;
+    private String time;
+    private String address;
+    private String place;
+    private String description;
+    private LocalDate localDate;
+
+    @VisibleForTesting
+    public EventItem(){
+    }
 
     public EventItem(@NonNull String time,@NonNull String address,@NonNull String place,@NonNull String description, @Nullable LocalDate localDate) {
         this.time = time;

@@ -8,6 +8,7 @@ public interface BaseContract {
     interface View {
         void showError(String errorMessage);
         void showMessage(String message);
+        void showNoConnectionErrorMessage();
     }
 
     interface Presenter<V extends BaseContract.View> {

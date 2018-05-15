@@ -6,7 +6,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,6 @@ import org.wirbleibenalle.stressi.ui.model.EventItem;
 import org.wirbleibenalle.stressi.ui.model.ReceivedItems;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -40,12 +38,12 @@ public class CustomPagerAdapter extends PagerAdapter {
     private SwipeRefreshLayout refreshEventList;
     private RecyclerView rvEventsList;
     private EventsAdapter eventsAdapter = null;
-    private Map<Integer, ViewHolder> viewHolderMap = new Hashtable<>();
+    private final Map<Integer, ViewHolder> viewHolderMap = new Hashtable<>();
     private static final String TAG = CustomPagerAdapter.class.getSimpleName();
     private ReceivedItems receivedItems;
 
     public CustomPagerAdapter(Context context, LocalDate localDate, PageAdapterCallback
-            pageAdapterCallback, EventItemViewHolderListener eventItemViewHolderListener) {
+        pageAdapterCallback, EventItemViewHolderListener eventItemViewHolderListener) {
         Timber.d(TAG, "constructor CustomPagerAdapter()");
         setPageTitle(localDate);
         this.context = context;
@@ -59,37 +57,34 @@ public class CustomPagerAdapter extends PagerAdapter {
     }
 
     public void setItemsToRecycleView(List<EventItem> events, int position) {
-        if (events == null || events == null || events.size() <= 0) {
-            return;
-        }
-        if(viewHolderMap.containsKey(position)) {
+        if (viewHolderMap.containsKey(position)) {
             receivedItems = null;
             Timber.d(TAG, "setItemsToRecycleView() currentDay: " + eventsAdapter.getCurrentDay() +
                 " eventItemList.get(0)");
             viewHolderMap.get(position).eventsAdapter.setItems(events);
             notifyDataSetChanged();
-        }else{
-            receivedItems = new ReceivedItems(events,position);
+        } else {
+            receivedItems = new ReceivedItems(events, position);
         }
     }
 
     @VisibleForTesting
-    boolean containViewHolder(int position){
+    boolean containViewHolder(int position) {
         return viewHolderMap.containsKey(position);
     }
 
     public void showPullToRefreshProgress(int position) {
-        if(containViewHolder(position)) {
+        if (containViewHolder(position)) {
             viewHolderMap.get(position).refreshEventList.setRefreshing(true);
-        }else if (viewHolderMap.size() == 0 && refreshEventList != null) {
+        } else if (viewHolderMap.size() == 0 && refreshEventList != null) {
             refreshEventList.setRefreshing(true);
         }
     }
 
     public void hidePullToRefreshProgress(int position) {
-        if(containViewHolder(position)) {
+        if (containViewHolder(position)) {
             viewHolderMap.get(position).refreshEventList.setRefreshing(false);
-        }else if (viewHolderMap.size() == 0 && refreshEventList != null) {
+        } else if (viewHolderMap.size() == 0 && refreshEventList != null) {
             refreshEventList.setRefreshing(false);
         }
     }
@@ -102,7 +97,7 @@ public class CustomPagerAdapter extends PagerAdapter {
         rvEventsList.setLayoutManager(layoutManager);
         rvEventsList.setHasFixedSize(false);
         SimpleDividerItemDecoration dividerItemDecoration = new SimpleDividerItemDecoration(
-                rvEventsList.getContext());
+            rvEventsList.getContext());
         rvEventsList.addItemDecoration(dividerItemDecoration);
         rvEventsList.setAdapter(eventsAdapter);
     }
@@ -118,7 +113,7 @@ public class CustomPagerAdapter extends PagerAdapter {
         initializeRecyclerView(position);
         viewHolderMap.put(position, new ViewHolder(refreshEventList, rvEventsList, eventsAdapter));
         collection.addView(layout);
-        if(receivedItems != null && receivedItems.position == position){
+        if (receivedItems != null && receivedItems.position == position) {
             eventsAdapter.setItems(new ArrayList<>(receivedItems.items));
             refreshEventList.setRefreshing(false);
             receivedItems = null;

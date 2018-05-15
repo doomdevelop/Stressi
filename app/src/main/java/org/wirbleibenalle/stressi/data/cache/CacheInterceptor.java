@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -31,7 +32,7 @@ public class CacheInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Response response;
         Request request = chain.request();
-        if(request.url() == null){
+        if (request.url() == null) {
             return chain.proceed(request);
         }
         final String url = request.url().toString();
@@ -42,7 +43,7 @@ public class CacheInterceptor implements Interceptor {
             splitUrl = url.split("=");
             if (isDateValid(splitUrl)) {
                 date = splitUrl[1];
-            }else {
+            } else {
                 return chain.proceed(request);
             }
         }
@@ -53,25 +54,25 @@ public class CacheInterceptor implements Interceptor {
             if (cacheEvent != null) {
                 String responseString = cacheEvent.htmlResponse;
                 return new Response.Builder()
-                        .code(200)
-                        .message(responseString)
-                        .request(chain.request())
-                        .protocol(Protocol.HTTP_1_0)
-                        .body(ResponseBody.create(MediaType.parse("application/xhtml"), responseString.getBytes()))
-                        .addHeader("content-type", "text/html")
-                        .build();
+                    .code(200)
+                    .message(responseString)
+                    .request(chain.request())
+                    .protocol(Protocol.HTTP_1_0)
+                    .body(ResponseBody.create(MediaType.parse("application/xhtml"), responseString.getBytes()))
+                    .addHeader("content-type", "text/html")
+                    .build();
             }
         }
         response = chain.proceed(request);
         String htmlResponse = response.body().string();
         if (date != null) {
             cacheController.cache(new CacheEvent(htmlResponse, date, System.currentTimeMillis()));
-            if(isOnPushToRefrash) {
+            if (isOnPushToRefrash) {
                 cacheController.setOnPullToRefresh(date, false);
             }
         }
         return response.newBuilder()
-                .body(ResponseBody.create(response.body().contentType(), htmlResponse)).build();
+            .body(ResponseBody.create(response.body().contentType(), htmlResponse)).build();
     }
 
     private LocalDate parse(String[] splitedUrl) {
@@ -79,14 +80,13 @@ public class CacheInterceptor implements Interceptor {
             return null;
         }
         String dateStr = splitedUrl[1];
-        LocalDate localDate = new LocalDate(dateStr);
-        return localDate;
+        return new LocalDate(dateStr);
     }
 
     @VisibleForTesting
     boolean isDateValid(String[] splitedUrl) {
         if (splitedUrl.length == 2 && splitedUrl[1] != null && splitedUrl[1].length() > 0) {
-            DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             format.setLenient(false);
             try {
                 format.parse(splitedUrl[1]);

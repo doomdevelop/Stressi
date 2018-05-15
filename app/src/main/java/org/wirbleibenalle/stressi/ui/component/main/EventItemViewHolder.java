@@ -1,7 +1,9 @@
 package org.wirbleibenalle.stressi.ui.component.main;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,7 +19,7 @@ import butterknife.ButterKnife;
 
 public class EventItemViewHolder extends RecyclerView.ViewHolder {
 
-    private RecyclerItemListener onRowClickListener;
+    private final RecyclerItemListener onRowClickListener;
 
     @BindView(R.id.event_time)
     TextView tvTime;
@@ -27,12 +29,13 @@ public class EventItemViewHolder extends RecyclerView.ViewHolder {
     TextView tvPlace;
     @BindView(R.id.event_description)
     TextView tvDescription;
-    @BindView(R.id.event_share)
-    ImageView ivShare;
-    @BindView(R.id.event_show_map)
-    ImageView ivShowMap;
-    @BindView(R.id.event_calendar)
-    ImageView ivCalendar;
+    @BindView(R.id.event_share_fl)
+    FrameLayout flShare;
+    @BindView(R.id.event_show_map_fl)
+    FrameLayout flShowMap;
+    @BindView(R.id.event_calendar_fl)
+    FrameLayout flCalendar;
+
 
     private final EventItemViewHolderListener eventItemViewHolderListener;
 
@@ -43,16 +46,17 @@ public class EventItemViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, itemView);
     }
 
+    @NonNull
     public void render(int position, final EventItem eventItem) {
         tvTime.setText(eventItem.getTime());
         tvDescription.setText(eventItem.getDescription());
         tvPlace.setText(eventItem.getPlace());
         tvAddress.setText(eventItem.getAddress());
 
-        ivShare.setOnClickListener(v -> eventItemViewHolderListener.onShareEventClicked(eventItem));
-        ivShowMap.setOnClickListener(v-> eventItemViewHolderListener.onShowEventOnMapClicked(eventItem));
-        ivCalendar.setOnClickListener(v->eventItemViewHolderListener.onAddEventToCalendarClicked(eventItem));
-        itemView.setOnClickListener(v -> onRowClickListener.onItemSelected(position));
+        flShare.setOnClickListener(v -> eventItemViewHolderListener.onShareEventClicked(eventItem));
+        flShowMap.setOnClickListener(v-> eventItemViewHolderListener.onShowEventOnMapClicked(eventItem));
+        flCalendar.setOnClickListener(v->eventItemViewHolderListener.onAddEventToCalendarClicked(eventItem));
+//        itemView.setOnClickListener(v -> onRowClickListener.onItemSelected(position));
     }
 
     public interface EventItemViewHolderListener {

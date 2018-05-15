@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingBottom="6dp"
-    android:paddingTop="6dp">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="6dp"
+                android:paddingTop="6dp">
 
     <RelativeLayout
         android:id="@+id/event_time_place_layout"
@@ -16,70 +16,99 @@
             android:id="@+id/event_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textIsSelectable="true"
             android:layout_alignParentStart="true"
             android:layout_marginEnd="40dp"
+            android:textIsSelectable="true"
             android:textStyle="bold"
-            tools:text="23;34" />
+            tools:text="23;34"/>
 
         <TextView
             android:id="@+id/event_place"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textIsSelectable="true"
             android:layout_toEndOf="@+id/event_time"
+            android:textIsSelectable="true"
             android:textStyle="bold"
-            tools:text="dfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdwef" />
+            tools:text="dfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdwef"/>
     </RelativeLayout>
 
     <TextView
         android:id="@+id/event_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textIsSelectable="true"
         android:layout_below="@+id/event_time_place_layout"
         android:layout_marginTop="4dp"
-        tools:text="effsffsfsffsdfsdfdsfdsgdsgdsgdsgdsgdsgdsgdsgdsg" />
+        android:textIsSelectable="true"
+        tools:text="effsffsfsffsdfsdfdsfdsgdsgdsgdsgdsgdsgdsgdsgdsg"/>
 
     <TextView
         android:id="@+id/event_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textIsSelectable="true"
         android:layout_below="@+id/event_address"
-        android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
-        tools:text="effsffsfsffsdfsdfdsfdsgdsgdsgdsgdsgdsgdsgdsgdsg" />
+        android:layout_marginTop="4dp"
+        android:textIsSelectable="true"
+        tools:text="effsffsfsffsdfsdfdsfdsgdsgdsgdsgdsgdsgdsgdsgdsg"/>
 
-    <ImageView
-        android:id="@+id/event_show_map"
+    <FrameLayout
+        android:id="@+id/event_show_map_fl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/event_description"
         android:layout_centerVertical="true"
-        android:background="@drawable/icon_selector"
-        android:src="@android:drawable/ic_dialog_map"
-        android:contentDescription="map"/>
+        android:background="@drawable/icon_selector">
 
-    <ImageView
-        android:id="@+id/event_share"
+        <ImageView
+            android:id="@+id/event_show_map"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_below="@+id/event_description"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:contentDescription="@string/description_map"
+            android:src="@drawable/stressi_map_icon_trans"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/event_share_fl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
         android:layout_below="@+id/event_description"
-        android:background="@drawable/icon_selector"
-        android:src="@android:drawable/ic_menu_share"
-        android:contentDescription="share"/>
+        android:layout_centerVertical="true"
+        android:background="@drawable/icon_selector">
 
-    <ImageView
-        android:id="@+id/event_calendar"
+        <ImageView
+            android:id="@+id/event_share"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/event_description"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:contentDescription="@string/description_share"
+            android:src="@android:drawable/ic_menu_share"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/event_calendar_fl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/event_description"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_below="@+id/event_description"
-        android:background="@drawable/icon_selector"
-        android:src="@android:drawable/ic_menu_my_calendar"
-        android:contentDescription="calendar"/>
+        android:background="@drawable/icon_selector">
+
+        <ImageView
+            android:id="@+id/event_calendar"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_below="@+id/event_description"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:contentDescription="@string/description_calendar"
+            android:src="@android:drawable/ic_menu_my_calendar"/>
+    </FrameLayout>
 </RelativeLayout>

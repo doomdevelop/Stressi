@@ -1,8 +1,6 @@
 package org.wirbleibenalle.stressi.ui.base;
 
 import android.arch.lifecycle.LifecycleRegistry;
-import android.arch.lifecycle.LifecycleRegistryOwner;
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
@@ -48,7 +46,6 @@ public abstract class BaseActivity<V extends BaseContract.View, P extends BaseCo
         presenter.detachView();
     }
 
-
     @Override
     public void showError(String errorMessage) {
         Snackbar snackbar = createSnackbar(errorMessage);
@@ -73,10 +70,10 @@ public abstract class BaseActivity<V extends BaseContract.View, P extends BaseCo
     protected abstract void setTitle(String title);
 
     protected abstract void animateTitle();
+
     private void initializeButterKnife() {
         ButterKnife.bind(this);
     }
-
 
     protected abstract P initPresenter();
 }

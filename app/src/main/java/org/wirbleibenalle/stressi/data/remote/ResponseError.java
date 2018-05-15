@@ -5,8 +5,8 @@ package org.wirbleibenalle.stressi.data.remote;
  */
 
 public class ResponseError {
-    private int errorType;
-    private int errorCode;
+    private final int errorType;
+    private final int errorCode;
 
     public ResponseError(int errorType, int errorCode) {
         this.errorType = errorType;

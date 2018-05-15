@@ -2,18 +2,18 @@ package org.wirbleibenalle.stressi.domain.usecase;
 
 
 import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
-public abstract class UseCase {
-    private Scheduler newThreadScheduler;
-    private Scheduler androidThread;
-    protected Observable observable;
+public abstract class UseCase<T> {
+    private final Scheduler newThreadScheduler;
+    private final Scheduler androidThread;
 
     public UseCase() {
-        this.newThreadScheduler = Schedulers.newThread();
+        this.newThreadScheduler = Schedulers.io();
         this.androidThread = AndroidSchedulers.mainThread();
     }
 
@@ -22,22 +22,19 @@ public abstract class UseCase {
         this.androidThread = androidThread;
     }
 
-
     /**
      * Builds an {@link io.reactivex.Observable} which will be used when executing the current {@link UseCase}.
      */
-    protected abstract Observable buildUseCaseObservable();
+    protected abstract Observable<T> buildUseCaseObservable();
 
 
     /**
      * Executes the current use case.
      */
-    public void execute(Observer observer) {
-        observable = buildUseCaseObservable()
+    public void execute(DisposableObserver<T> observer, CompositeDisposable compositeDisposable) {
+        Observable<T> observable = buildUseCaseObservable()
             .subscribeOn(newThreadScheduler)
             .observeOn(androidThread);
-        //TODO: pass instance of CompositeDisposable as parameter, add Observer
-        // compositeDisposable.add(observable.subscribeWith(observer))
-        observable.subscribeWith(observer);
+        compositeDisposable.add(observable.subscribeWith(observer));
     }
 }

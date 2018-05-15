@@ -75,8 +75,7 @@ dependencies {
     //parse html in to models
     implementation "pl.droidsonroids.retrofit2:converter-jspoon:$jspoon"
 
-//    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
-
+    implementation "com.google.guava:guava:$guava"
     // ViewModel and LiveData
     implementation "android.arch.lifecycle:extensions:$lifecycle"
     annotationProcessor "android.arch.lifecycle:compiler:$lifecycle"
@@ -89,11 +88,15 @@ dependencies {
     androidTestImplementation "org.mockito:mockito-core:$mockito"
 
     // PowerMock
-    testImplementation "org.powermock:powermock-module-junit4:$powerMockito"
-    testImplementation "org.powermock:powermock-module-junit4-rule:$powerMockito"
-    testImplementation "org.powermock:powermock-api-mockito:$powerMockito"
+//    testImplementation "org.powermock:powermock-module-junit4:$powerMockito"
+//    testImplementation "org.powermock:powermock-module-junit4-rule:$powerMockito"
+//    testImplementation "org.powermock:powermock-api-mockito2:$powerMockito"
     testImplementation "org.powermock:powermock-classloading-xstream:$powerMockito"
 
+    testImplementation 'org.powermock:powermock-module-junit4:1.7.0'
+    testImplementation 'org.powermock:powermock-module-junit4-rule:1.7.0'
+    testImplementation 'org.powermock:powermock-api-mockito2:1.7.0RC2'
+    testImplementation 'org.powermock:powermock-core:1.7.0'
     //AssertJ
     testImplementation "com.squareup.assertj:assertj-android:$assertj"
     androidTestImplementation "com.squareup.assertj:assertj-android:$assertj"
