@@ -22,6 +22,7 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 ext {
+    def outputDir = "/home/and/Development/Stressfaktor/release/"
     // Sdk and tools
     minSdk = 19
     targetSdk = 27
