@@ -109,8 +109,7 @@ public class EventTransformerTest {
     @Test
     public void transform_ShouldCreateEventItem_With_ValuesFromEvent() {
         Events events = new Events();
-        List<Event> eventList = createEventList(1);
-        events.events = eventList;
+        events.events = createEventList(1);
         Event event = events.events.get(0);
 
         List<EventItem> eventItemList = eventTransformer.transform(events);
@@ -125,8 +124,7 @@ public class EventTransformerTest {
     @Test
     public void transform_Should_CreateEventItem_With_No_Value() {
         Events events = new Events();
-        List<Event> eventList = createEventListCustom(1, null, null, null, null, null);
-        events.events = eventList;
+        events.events = createEventListCustom(1, null, null, null, null, null);
 
         List<EventItem> eventItemList = eventTransformer.transform(events);
         EventItem eventItem = eventItemList.get(0);
@@ -141,8 +139,7 @@ public class EventTransformerTest {
     @Test
     public void transform_Should_CreateEventItem_With_LocalDate() {
         Events events = new Events();
-        List<Event> eventList = createEventListCustom(1, null, null, null, null, null);
-        events.events = eventList;
+        events.events = createEventListCustom(1, null, null, null, null, null);
 
         List<EventItem> eventItemList = eventTransformer.transform(events);
         EventItem eventItem = eventItemList.get(0);
@@ -153,9 +150,8 @@ public class EventTransformerTest {
     @Test
     public void transform_Should_CreateEventItem_With_AddressAsPlace_When_PlaceHasNull() {
         Events events = new Events();
-        List<Event> eventList = createEventListCustom(1, PLACE_ADDRESS, null, null, null, null);
-        events.events = eventList;
-        Event event = eventList.get(0);
+        events.events = createEventListCustom(1, PLACE_ADDRESS, null, null, null, null);
+        Event event = events.events.get(0);
 
         List<EventItem> eventItemList = eventTransformer.transform(events);
         EventItem eventItem = eventItemList.get(0);
@@ -167,10 +163,9 @@ public class EventTransformerTest {
     @Test
     public void transform_Should_CreateEventItem_With_AddressAsPlace_When_PlaceHasNoValue() {
         Events events = new Events();
-        List<Event> eventList = createEventListCustom(1, PLACE_ADDRESS, null, NO_VALUE, null,
+        events.events = createEventListCustom(1, PLACE_ADDRESS, null, NO_VALUE, null,
             null);
-        events.events = eventList;
-        Event event = eventList.get(0);
+        Event event = events.events.get(0);
 
         List<EventItem> eventItemList = eventTransformer.transform(events);
         EventItem eventItem = eventItemList.get(0);
@@ -183,10 +178,9 @@ public class EventTransformerTest {
     @Test
     public void transform_Should_CreateEventItem_With_PlaceAsAddress_When_AddressHasNoValue() {
         Events events = new Events();
-        List<Event> eventList = createEventListCustom(1, NO_VALUE, PLACE, NO_VALUE, null,
+        events.events = createEventListCustom(1, NO_VALUE, PLACE, NO_VALUE, null,
             null);
-        events.events = eventList;
-        Event event = eventList.get(0);
+        Event event = events.events.get(0);
 
         List<EventItem> eventItemList = eventTransformer.transform(events);
         EventItem eventItem = eventItemList.get(0);
@@ -200,10 +194,8 @@ public class EventTransformerTest {
     transform_Should_CreateEventItem_With_AddressAndDescription_From_AddressAndDescriptionForm
         () {
         Events events = new Events();
-        List<Event> eventList = createEventListCustom(1, NO_VALUE, null, null, null,
+        events.events = createEventListCustom(1, NO_VALUE, null, null, null,
             ADDRESS_AND_DESCRIPTION);
-        events.events = eventList;
-        Event event = eventList.get(0);
 
         List<EventItem> eventItemList = eventTransformer.transform(events);
         EventItem eventItem = eventItemList.get(0);
@@ -218,10 +210,9 @@ public class EventTransformerTest {
     transform_Should_CreateEventItem_With_AddressAndMultiDescription_From_AddressAndDescriptionForm
         () {
         Events events = new Events();
-        List<Event> eventList = createEventListCustom(1, NO_VALUE, null, null, null,
+        events.events = createEventListCustom(1, NO_VALUE, null, null, null,
             ADDRESS_AND_MULTI_DESCRIPTION);
-        events.events = eventList;
-        Event event = eventList.get(0);
+        Event event = events.events.get(0);
 
         List<EventItem> eventItemList = eventTransformer.transform(events);
         EventItem eventItem = eventItemList.get(0);
@@ -236,10 +227,9 @@ public class EventTransformerTest {
     @Test
     public void transform_Should_CreateEventItem_With_Time() {
         Events events = new Events();
-        List<Event> eventList = createEventListCustom(1, NO_VALUE, NO_VALUE, NO_VALUE, TIME,
+        events.events = createEventListCustom(1, NO_VALUE, NO_VALUE, NO_VALUE, TIME,
             NO_VALUE);
-        events.events = eventList;
-        Event event = eventList.get(0);
+        Event event = events.events.get(0);
         List<EventItem> eventItemList = eventTransformer.transform(events);
         EventItem eventItem = eventItemList.get(0);
 

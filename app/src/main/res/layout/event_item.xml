@@ -63,8 +63,6 @@
             android:id="@+id/event_show_map"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:layout_below="@+id/event_description"
-            android:layout_centerVertical="true"
             android:layout_gravity="center"
             android:contentDescription="@string/description_map"
             android:src="@drawable/stressi_map_icon_trans"/>
@@ -83,9 +81,6 @@
             android:id="@+id/event_share"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@+id/event_description"
-            android:layout_centerVertical="true"
             android:layout_gravity="center"
             android:contentDescription="@string/description_share"
             android:src="@android:drawable/ic_menu_share"/>
@@ -104,9 +99,6 @@
             android:id="@+id/event_calendar"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:layout_below="@+id/event_description"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
             android:layout_gravity="center"
             android:contentDescription="@string/description_calendar"
             android:src="@android:drawable/ic_menu_my_calendar"/>
