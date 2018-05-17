@@ -29,13 +29,14 @@ public class StressiApplication extends Application {
             return;
         }
         LeakCanary.install(this);
+        JodaTimeAndroid.init(this);
+
         if (BuildConfig.DEBUG) {
             Timber.plant(new DebugTree());
         } else {
             Timber.plant(new CrashReportingTree());
         }
         mainComponent = DaggerMainComponent.builder().mainModule(new MainModule(getApplicationContext())).build();
-        JodaTimeAndroid.init(this);
     }
 
     public MainComponent getMainComponent() {
@@ -51,7 +52,6 @@ public class StressiApplication extends Application {
             if (priority == Log.VERBOSE || priority == Log.DEBUG) {
                 return;
             }
-
 //            FakeCrashLibrary.log(priority, tag, message);
             switch (priority) {
                 case Log.ERROR:

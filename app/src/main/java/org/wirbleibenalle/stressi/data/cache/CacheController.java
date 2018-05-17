@@ -2,9 +2,6 @@ package org.wirbleibenalle.stressi.data.cache;
 
 import android.content.SharedPreferences;
 
-import okhttp3.Interceptor;
-
-
 public abstract class CacheController<T> {
     protected final SharedPreferences sharedPreferences;
 

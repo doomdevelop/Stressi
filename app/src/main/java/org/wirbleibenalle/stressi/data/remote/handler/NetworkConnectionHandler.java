@@ -3,8 +3,6 @@ package org.wirbleibenalle.stressi.data.remote.handler;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import org.wirbleibenalle.stressi.data.remote.ResponseErrorListener;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,15 +10,15 @@ import javax.inject.Inject;
 
 public class NetworkConnectionHandler extends ConnectionHandler {
     private final ConnectivityManager connectivityManager;
-    private List<ResponseErrorListener> responseErrorListenerList = new ArrayList<>();
+    private List<ConnectionChangeListener> connectionChangeListenerList = new ArrayList<>();
 
     @Inject
-    public void addResponseErrorListener(ResponseErrorListener responseErrorListener) {
-        responseErrorListenerList.add(responseErrorListener);
+    public void addResponseErrorListener(ConnectionChangeListener connectionChangeListener) {
+        connectionChangeListenerList.add(connectionChangeListener);
     }
 
-    public void removeResponseErrorListener(ResponseErrorListener responseErrorListener) {
-        responseErrorListenerList.remove(responseErrorListener);
+    public void removeResponseErrorListener(ConnectionChangeListener connectionChangeListener) {
+        connectionChangeListenerList.remove(connectionChangeListener);
     }
 
     public NetworkConnectionHandler(ConnectivityManager connectivityManager) {
