@@ -1,107 +1,79 @@
 package org.wirbleibenalle.stressi.ui.base;
 
+import android.arch.lifecycle.LifecycleRegistry;
 import android.os.Bundle;
+import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
-import android.widget.TextView;
 
 import org.wirbleibenalle.stressi.stressfaktor.R;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
 
-/**
- * Created by and on 26.10.16.
- */
+public abstract class BaseActivity<V extends BaseContract.View, P extends BaseContract.Presenter<V>>
+    extends AppCompatActivity implements BaseContract.View {
 
-public abstract class BaseActivity extends AppCompatActivity implements Presenter.View {
-    @Bind(R.id.toolbar)
-    Toolbar toolbar;
-    @Bind(R.id.txt_toolbar_title)
-    protected
-    TextView tvTitle;
-    protected Presenter presenter;
+    private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
+    protected P presenter;
 
-    protected abstract void initializeDagger();
-
-    protected abstract void initializePresenter();
-
-    public abstract int getLayoutId();
-
-    private String toolbarTitleKey;
-
+    @SuppressWarnings("unchecked")
+    @CallSuper
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
         initializeButterKnife();
         initializeDagger();
-        initializePresenter();
         initializeToolbar();
-        presenter.initialize(getIntent().getExtras());
-    }
 
-    protected void initializeToolbar() {
-        setSupportActionBar(toolbar);
-    }
-
-    protected void setTitle(String title) {
-        tvTitle.setText(title);
-    }
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (presenter != null) {
-            presenter.start();
-        }
+        presenter = initPresenter();
+        presenter.attachLifecycle(getLifecycle());
+        presenter.attachView((V) this);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    public LifecycleRegistry getLifecycle() {
+        return lifecycleRegistry;
+    }
+
+    @CallSuper
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.detachLifecycle(getLifecycle());
+        presenter.detachView();
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        if (presenter != null) {
-            presenter.finalizeView();
-        }
+    public void showError(String errorMessage) {
+        Snackbar snackbar = createSnackbar(errorMessage);
+        snackbar.getView().setBackgroundColor(ContextCompat.getColor(this, R.color.colorMainRed));
+        snackbar.show();
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-//        outState.putSerializable(SAVE_STATE_TRANSLATIONS_KEY, (Serializable) getTranslations());
+    public void showMessage(String message) {
+        Snackbar snackbar = createSnackbar(message);
+        snackbar.show();
     }
+
+    protected abstract void initializeDagger();
+
+    public abstract int getLayoutId();
+
+    protected abstract Snackbar createSnackbar(String message);
+
+    protected abstract void initializeToolbar();
+
+    protected abstract void setTitle(String title);
+
+    protected abstract void animateTitle();
 
     private void initializeButterKnife() {
         ButterKnife.bind(this);
     }
 
-//    @Nullable
-//    @OnClick({R.id.ic_toolbar_settings, R.id.ic_toolbar_home})
-//    public void onClick(View view) {
-//        switch (view.getId()) {
-//            case R.id.ic_toolbar_settings:
-//                presenter.onSettingsClick();
-//                break;
-//            case R.id.ic_toolbar_home:
-//                presenter.onHomeClick();
-//                break;
-//        }
-//    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-        }
-        return super.onOptionsItemSelected(item);
-    }
+    protected abstract P initPresenter();
 }

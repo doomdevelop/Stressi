@@ -2,19 +2,18 @@ package org.wirbleibenalle.stressi.domain.usecase;
 
 import org.joda.time.LocalDate;
 import org.wirbleibenalle.stressi.data.repository.DataRepository;
+import org.wirbleibenalle.stressi.ui.model.EventItem;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
-/**
- * Created by and on 26.10.16.
- */
 
-public class GetEventsUseCase extends UseCase {
-    private DataRepository dataRepository;
-    private  LocalDate localDate;
-    private Integer position;
+public class GetEventsUseCase extends UseCase<List<EventItem>> {
+    private final DataRepository dataRepository;
+    private LocalDate localDate;
 
     @Inject
     public GetEventsUseCase(DataRepository dataRepository) {
@@ -22,12 +21,8 @@ public class GetEventsUseCase extends UseCase {
     }
 
     @Override
-    protected Observable buildUseCaseObservable() {
-        return dataRepository.getEvents(localDate, position);
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
+    protected Observable<List<EventItem>> buildUseCaseObservable() {
+        return dataRepository.getEvents(localDate);
     }
 
     public void setLocalDate(LocalDate localDate) {

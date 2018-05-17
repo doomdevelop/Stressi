@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Stressfaktor</string>
+    <string name="no_connection">no network connection</string>
+    <string name="description_map">map</string>
+    <string name="description_calendar">calendar</string>
+    <string name="description_share">share</string>
+    <string name="description_stressfaktor">stressfaktor</string>
+    <string name="shareEventError">Sorry, there was a problem with extracting share data from the
+        event.</string>
 </resources>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <!-- Base application theme. -->
@@ -37,5 +38,4 @@
     <style name="toolbar_icon" parent="Wrap">
         <item name="android:layout_gravity">center_vertical|left</item>
     </style>
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 </resources>

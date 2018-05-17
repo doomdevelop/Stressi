@@ -2,28 +2,26 @@
 <android.support.design.widget.AppBarLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    style="@style/MatchWidth"
     android:background="@android:color/transparent"
-    android:theme="@style/AppTheme.AppBarOverlay"
-    app:elevation="0dp">
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    app:elevation="70dp">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="?android:attr/actionBarSize"
         android:background="@android:color/holo_blue_bright">
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
+            style="@style/Match">
             <ImageView
                 android:id="@+id/ic_toolbar_home"
                 style="@style/toolbar_icon"
                 android:layout_centerVertical="true"
                 android:src="@drawable/sf_logo"
-                android:visibility="visible"/>
+                android:visibility="visible"
+                android:contentDescription="@string/description_stressfaktor"/>
 
             <TextView
                 android:id="@+id/txt_toolbar_title"
@@ -32,14 +30,8 @@
                 android:layout_centerVertical="true"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="TITLE"
+                android:textStyle="bold"
                 android:textColor="@android:color/black"/>
-
-            <!--<ImageView-->
-            <!--style="@style/Wrap"-->
-            <!--android:id="@+id/ic_toolbar_settings"-->
-            <!--android:src="@android:drawable/ic_menu_manage"/>-->
-
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 </android.support.design.widget.AppBarLayout>
