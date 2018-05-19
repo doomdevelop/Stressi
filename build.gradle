@@ -22,7 +22,6 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 ext {
-    def outputDir = "/home/and/Development/Stressfaktor/release/"
     // Sdk and tools
     minSdk = 19
     targetSdk = 27
@@ -31,14 +30,9 @@ ext {
 
     // App dependencies
     supportLibrary = '27.1.1'
-    guava = '18.0'
-    arrow = '1.0.0'
     junit = '4.12'
     mockito = '2.7.19'
     powerMockito = '1.7.0'
-    hamcrest = '1.3'
-    runner = '1.0.0'
-    rules = '1.0.0'
     espresso = '3.0.1'
     picasso = '2.71828'
     butterknife = '8.8.1'
