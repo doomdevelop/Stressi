@@ -1,5 +1,6 @@
 package org.wirbleibenalle.stressi;
 
+import android.app.Activity;
 import android.app.Application;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -8,16 +9,23 @@ import com.squareup.leakcanary.LeakCanary;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
-import org.wirbleibenalle.stressi.di.MainModule;
+import org.wirbleibenalle.stressi.di.AppInjector;
 import org.wirbleibenalle.stressi.stressfaktor.BuildConfig;
 import org.wirbleibenalle.stressi.ui.DaggerMainComponent;
-import org.wirbleibenalle.stressi.ui.MainComponent;
+import org.wirbleibenalle.stressi.di.MainComponent;
 
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.HasActivityInjector;
 import timber.log.Timber;
 import timber.log.Timber.DebugTree;
 
 
-public class StressiApplication extends Application {
+public class StressiApplication extends Application implements HasActivityInjector {
+    @Inject
+    DispatchingAndroidInjector<Activity> dispatchingAndroidInjector;
     private MainComponent mainComponent;
 
     @Override
@@ -36,11 +44,18 @@ public class StressiApplication extends Application {
         } else {
             Timber.plant(new CrashReportingTree());
         }
-        mainComponent = DaggerMainComponent.builder().mainModule(new MainModule(getApplicationContext())).build();
+        mainComponent = AppInjector.init(this);//DaggerMainComponent.builder().mainModule(new
+        // MainModule(getApplicationContext())).build();
+//        mainComponent.inject(this);
     }
 
     public MainComponent getMainComponent() {
         return mainComponent;
+    }
+
+    @Override
+    public AndroidInjector<Activity> activityInjector() {
+        return dispatchingAndroidInjector;
     }
 
     /**

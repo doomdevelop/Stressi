@@ -8,6 +8,7 @@ import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.animation.Animation;
@@ -19,6 +20,7 @@ import com.google.common.base.Preconditions;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.wirbleibenalle.stressi.StressiApplication;
+import org.wirbleibenalle.stressi.di.Injectable;
 import org.wirbleibenalle.stressi.stressfaktor.R;
 import org.wirbleibenalle.stressi.ui.animation.BounceInterpolator;
 import org.wirbleibenalle.stressi.ui.base.BaseActivity;
@@ -32,12 +34,15 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.BindView;
+import dagger.android.AndroidInjector;
+import dagger.android.support.HasSupportFragmentInjector;
 import timber.log.Timber;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MainActivity extends BaseActivity<MainActivityContract.View, MainActivityContract.Presenter>
-    implements MainActivityContract.View, EventItemViewHolder.EventItemViewHolderListener {
+    implements MainActivityContract.View, EventItemViewHolder.EventItemViewHolderListener,
+    Injectable {
 
     private MainPresenter presenter;
 
@@ -57,7 +62,7 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
     @Override
     protected void initializeDagger() {
         StressiApplication app = (StressiApplication) getApplication();
-        app.getMainComponent().inject(this);
+//        app.getMainComponent().inject(this);
     }
 
     @Override

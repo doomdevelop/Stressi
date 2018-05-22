@@ -1,5 +1,6 @@
 package org.wirbleibenalle.stressi.di;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -35,27 +36,27 @@ import static org.wirbleibenalle.stressi.util.Constants.BASE_URL;
 
 @Module(includes = ViewModelModule.class)
 public class MainModule {
-    private final Context context;
+//    private final Context context;
     private static final String SHARE_PREF_NAME = "stressfaktor_pref";
     //timeout in min
     private static final int CONNECT_TIMEOUT = 5;
     private static final int READ_TIMEOUT = 2;
     private static final int WRITE_TIMEOUT = 1;
 
-    public MainModule(Context context) {
-        this.context = context;
-    }
+//    public MainModule(Context context) {
+//        this.context = context;
+//    }
+
+//    @Provides
+//    @Singleton
+//    public Context provideApplicationContext() {
+//        return this.context;
+//    }
 
     @Provides
     @Singleton
-    public Context provideApplicationContext() {
-        return this.context;
-    }
-
-    @Provides
-    @Singleton
-    public SharedPreferences provideSharedPreferences(Context context) {
-        return context.getSharedPreferences(SHARE_PREF_NAME, 0);
+    public SharedPreferences provideSharedPreferences(Application application) {
+        return application.getSharedPreferences(SHARE_PREF_NAME, 0);
     }
 
     @Provides
@@ -78,8 +79,8 @@ public class MainModule {
 
     @Provides
     @Singleton
-    public ConnectivityManager provideConnectivityManager(Context context) {
-        return (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    public ConnectivityManager provideConnectivityManager(Application application) {
+        return (ConnectivityManager) application.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
     @Provides
