@@ -25,7 +25,6 @@ public abstract class BaseActivity<V extends BaseContract.View, P extends BaseCo
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
         initializeButterKnife();
-        initializeDagger();
         initializeToolbar();
 
         presenter = initPresenter();
@@ -58,8 +57,6 @@ public abstract class BaseActivity<V extends BaseContract.View, P extends BaseCo
         Snackbar snackbar = createSnackbar(message);
         snackbar.show();
     }
-
-    protected abstract void initializeDagger();
 
     public abstract int getLayoutId();
 

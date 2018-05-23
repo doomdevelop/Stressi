@@ -11,7 +11,7 @@ import dagger.Component;
 import dagger.android.AndroidInjectionModule;
 
 @Singleton
-@Component(modules = MainModule.class)
+@Component(modules = {AndroidInjectionModule.class, MainActivityModule.class, MainModule.class})
 public interface MainComponent {
     @Component.Builder
     interface Builder {
@@ -19,12 +19,8 @@ public interface MainComponent {
         @BindsInstance
         Builder application(Application application);
 
-        @BindsInstance
-        Builder mainModule(MainModule mainModule);
-
         MainComponent build();
     }
-    void inject(StressiApplication stressiApplication);
-//    void inject(MainActivity activity);
 
+    void inject(StressiApplication stressiApplication);
 }

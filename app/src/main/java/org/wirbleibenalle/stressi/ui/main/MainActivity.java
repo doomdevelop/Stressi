@@ -8,19 +8,14 @@ import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
-import com.google.common.base.Preconditions;
-
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.wirbleibenalle.stressi.StressiApplication;
-import org.wirbleibenalle.stressi.di.Injectable;
 import org.wirbleibenalle.stressi.stressfaktor.R;
 import org.wirbleibenalle.stressi.ui.animation.BounceInterpolator;
 import org.wirbleibenalle.stressi.ui.base.BaseActivity;
@@ -34,15 +29,13 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.BindView;
-import dagger.android.AndroidInjector;
-import dagger.android.support.HasSupportFragmentInjector;
+import dagger.android.AndroidInjection;
 import timber.log.Timber;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MainActivity extends BaseActivity<MainActivityContract.View, MainActivityContract.Presenter>
-    implements MainActivityContract.View, EventItemViewHolder.EventItemViewHolderListener,
-    Injectable {
+    implements MainActivityContract.View, EventItemViewHolder.EventItemViewHolderListener {
 
     private MainPresenter presenter;
 
@@ -60,12 +53,6 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
     private CustomPagerAdapter customPagerAdapter;
 
     @Override
-    protected void initializeDagger() {
-        StressiApplication app = (StressiApplication) getApplication();
-//        app.getMainComponent().inject(this);
-    }
-
-    @Override
     protected MainPresenter initPresenter() {
         presenter = ViewModelProviders.of(this, viewModelFactory).get(MainPresenter.class);
         if (!presenter.getStateBundle().getBoolean(MainPresenter.class.getSimpleName(), false)) {
@@ -77,6 +64,7 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
     }
 
@@ -100,12 +88,12 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 //positionOffset by page change from 0.0-1.0
-                Timber.i( "onPageScrolled() position " + position + " positionOffset: " + positionOffset + " positionOffsetPixels " + positionOffsetPixels);
+                Timber.i("onPageScrolled() position " + position + " positionOffset: " + positionOffset + " positionOffsetPixels " + positionOffsetPixels);
             }
 
             @Override
             public void onPageSelected(int position) {
-                Timber.i( "onPageSelected() %s", position);
+                Timber.i("onPageSelected() %s", position);
                 animateTitle();
                 presenter.onPageSelected(position);
             }
@@ -146,9 +134,9 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
 
     @Override
     public void addEventToCalendar(EventItem eventItem, DateTime datetime, String shortTitle) {
-        checkNotNull(eventItem,"can not add eventItem as null to calendar");
-        checkNotNull(datetime,"can not add datetime as null to calendar");
-        checkNotNull(shortTitle,"can not add shortTitle as null to calendar");
+        checkNotNull(eventItem, "can not add eventItem as null to calendar");
+        checkNotNull(datetime, "can not add datetime as null to calendar");
+        checkNotNull(shortTitle, "can not add shortTitle as null to calendar");
         Intent intent = new Intent(Intent.ACTION_EDIT);
         intent.setType("vnd.android.cursor.item/event");
         intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, datetime.getMillis());
@@ -165,7 +153,7 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
 
     @Override
     public void showEventOnMap(String address) {
-        checkNotNull(address,"event address can not be null");
+        checkNotNull(address, "event address can not be null");
         Uri gmmIntentUri = Uri.parse(address);
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
         mapIntent.setPackage("com.google.android.apps.maps");
@@ -175,7 +163,7 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
     }
 
     @Override
-    public void shareEvent(@NonNull String subject,@NonNull String text) {
+    public void shareEvent(@NonNull String subject, @NonNull String text) {
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);

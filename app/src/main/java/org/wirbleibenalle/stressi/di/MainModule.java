@@ -36,22 +36,11 @@ import static org.wirbleibenalle.stressi.util.Constants.BASE_URL;
 
 @Module(includes = ViewModelModule.class)
 public class MainModule {
-//    private final Context context;
     private static final String SHARE_PREF_NAME = "stressfaktor_pref";
     //timeout in min
     private static final int CONNECT_TIMEOUT = 5;
     private static final int READ_TIMEOUT = 2;
     private static final int WRITE_TIMEOUT = 1;
-
-//    public MainModule(Context context) {
-//        this.context = context;
-//    }
-
-//    @Provides
-//    @Singleton
-//    public Context provideApplicationContext() {
-//        return this.context;
-//    }
 
     @Provides
     @Singleton
@@ -101,7 +90,7 @@ public class MainModule {
 
     @Provides
     @Singleton
-    public Retrofit provideRetrofit(Context context, OkHttpClient okHttpClient) {
+    public Retrofit provideRetrofit(OkHttpClient okHttpClient) {
         return new Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)
