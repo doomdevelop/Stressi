@@ -67,6 +67,13 @@ public class MainPresenter extends BasePresenter<MainActivityContract.View> impl
         executeCall();
     }
 
+    public void onHomeClicked(){
+        if (!isViewAttached()) {
+            return;
+        }
+        getView().showPageByPosition(DEFAULT_POSITION);
+    }
+
     @VisibleForTesting
     void onSwitchDateByPosition(int position) {
         Timber.d("position=" + position + " currentPosition=" + currentPosition);

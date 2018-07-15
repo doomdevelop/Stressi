@@ -13,6 +13,8 @@ public class MainActivityContract {
 
         void setItemsToRecycleView(List<EventItem> events, int position);
 
+        void showPageByPosition(int position);
+
         void hidePullToRefreshProgress(int day);
 
         void showPullToRefreshProgress(int day);

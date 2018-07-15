@@ -10,11 +10,10 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
-
-import com.google.common.base.Preconditions;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -32,6 +31,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import timber.log.Timber;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -75,6 +75,21 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
         super.onCreate(savedInstanceState);
     }
 
+    @OnClick(R.id.ic_toolbar_home)
+    public void onClick(View view) {
+        if (view.getId() == R.id.ic_toolbar_home) {
+            presenter.onHomeClicked();
+        }
+    }
+
+    private void movePagerToPosition(int position) {
+        int current = viewPager.getCurrentItem();
+        int sign = current > position ? -1 : 1;
+        while (viewPager.getCurrentItem() != position) {
+            viewPager.setCurrentItem(viewPager.getCurrentItem() + sign, true);
+        }
+    }
+
     @Override
     public int getLayoutId() {
         return R.layout.activity_main;
@@ -95,12 +110,12 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 //positionOffset by page change from 0.0-1.0
-                Timber.i( "onPageScrolled() position " + position + " positionOffset: " + positionOffset + " positionOffsetPixels " + positionOffsetPixels);
+                Timber.i("onPageScrolled() position " + position + " positionOffset: " + positionOffset + " positionOffsetPixels " + positionOffsetPixels);
             }
 
             @Override
             public void onPageSelected(int position) {
-                Timber.i( "onPageSelected() %s", position);
+                Timber.i("onPageSelected() %s", position);
                 animateTitle();
                 presenter.onPageSelected(position);
             }
@@ -116,6 +131,11 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
     public void setItemsToRecycleView(@NonNull List<EventItem> events, int position) {
         customPagerAdapter.setItemsToRecycleView(events, position);
         Timber.d("size events: %s", events.size());
+    }
+
+    @Override
+    public void showPageByPosition(int position) {
+        movePagerToPosition(position);
     }
 
     @Override
@@ -141,9 +161,9 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
 
     @Override
     public void addEventToCalendar(EventItem eventItem, DateTime datetime, String shortTitle) {
-        checkNotNull(eventItem,"can not add eventItem as null to calendar");
-        checkNotNull(datetime,"can not add datetime as null to calendar");
-        checkNotNull(shortTitle,"can not add shortTitle as null to calendar");
+        checkNotNull(eventItem, "can not add eventItem as null to calendar");
+        checkNotNull(datetime, "can not add datetime as null to calendar");
+        checkNotNull(shortTitle, "can not add shortTitle as null to calendar");
         Intent intent = new Intent(Intent.ACTION_EDIT);
         intent.setType("vnd.android.cursor.item/event");
         intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, datetime.getMillis());
@@ -160,7 +180,7 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
 
     @Override
     public void showEventOnMap(String address) {
-        checkNotNull(address,"event address can not be null");
+        checkNotNull(address, "event address can not be null");
         Uri gmmIntentUri = Uri.parse(address);
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
         mapIntent.setPackage("com.google.android.apps.maps");
@@ -170,7 +190,7 @@ public class MainActivity extends BaseActivity<MainActivityContract.View, MainAc
     }
 
     @Override
-    public void shareEvent(@NonNull String subject,@NonNull String text) {
+    public void shareEvent(@NonNull String subject, @NonNull String text) {
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
