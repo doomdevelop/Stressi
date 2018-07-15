@@ -363,4 +363,18 @@ public class MainPresenterTest {
         mainPresenter.onCleared();
         verify(compositeDisposable).clear();
     }
+
+    @Test
+    public void getDayDiff_should_returnCorrectNumberOfDays(){
+        LocalDate localDate1 = LocalDate.now().minusDays(2);
+        LocalDate localDate2 = LocalDate.now();
+        int days = mainPresenter.getDaysDiff(localDate1,localDate2);
+        Assert.assertEquals(days,2);
+
+        LocalDate localDate3 = LocalDate.now().minusDays(2);
+        LocalDate localDate4 = LocalDate.now();
+
+        int daysMinus = mainPresenter.getDaysDiff(localDate4,localDate3);
+        Assert.assertEquals(daysMinus,-2);
+    }
 }

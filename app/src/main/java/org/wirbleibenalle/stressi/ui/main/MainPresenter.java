@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.wirbleibenalle.stressi.data.cache.EventCacheController;
 import org.wirbleibenalle.stressi.data.remote.handler.ConnectionHandler;
@@ -67,11 +68,18 @@ public class MainPresenter extends BasePresenter<MainActivityContract.View> impl
         executeCall();
     }
 
-    public void onHomeClicked(){
+    @VisibleForTesting
+    int getDaysDiff(LocalDate localDate1, LocalDate localDate2){
+        return Days.daysBetween(localDate1,localDate2).getDays();
+    }
+
+    public void onHomeClicked() {
         if (!isViewAttached()) {
             return;
         }
-        getView().showPageByPosition(DEFAULT_POSITION);
+        int days = getDaysDiff(DEFAULT_LOCAL_DATE, LocalDate.now());
+        //if user start app sunday and come back monday , show him monday as current day
+        getView().showPageByPosition(DEFAULT_POSITION + days);
     }
 
     @VisibleForTesting
